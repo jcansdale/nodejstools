@@ -4,7 +4,7 @@
     <Description>A basic Node.js Express 4 application for Microsoft Azure.</Description>
     <Icon Package="{FE8A8C3D-328A-476D-99F9-2A24B75F8C7F}" ID="404" />
     <ProjectType>JavaScript</ProjectType>
-    <TemplateID>Microsoft.JavaScript.ExpressApp</TemplateID>
+    <TemplateID>Microsoft.JavaScript.AzureExpressApp</TemplateID>
     <SortOrder>150</SortOrder>
     <CreateNewFolder>true</CreateNewFolder>
     <DefaultName>ExpressApp</DefaultName>
@@ -19,7 +19,7 @@
         <Folder Name="images"/>
         <Folder Name="javascripts"/>
         <Folder Name="stylesheets">
-          <ProjectItem>style.styl</ProjectItem>
+          <ProjectItem>main.css</ProjectItem>
         </Folder>
       </Folder>
       <Folder Name="routes">
@@ -27,9 +27,9 @@
         <ProjectItem>users.js</ProjectItem>
       </Folder>
       <Folder Name="views">
-        <ProjectItem>index.jade</ProjectItem>
-        <ProjectItem>layout.jade</ProjectItem>
-        <ProjectItem>error.jade</ProjectItem>
+        <ProjectItem>index.pug</ProjectItem>
+        <ProjectItem>layout.pug</ProjectItem>
+        <ProjectItem>error.pug</ProjectItem>
       </Folder>
       <Folder Name="bin">
         <ProjectItem ReplaceParameters="true">www</ProjectItem>
@@ -43,6 +43,7 @@
       <ProjectItem OpenInEditor="true">app.js</ProjectItem>
       <ProjectItem ReplaceParameters="true">package.json</ProjectItem>
       <ProjectItem ReplaceParameters="true">README.md</ProjectItem>
+      <ProjectItem>typings.json</ProjectItem>
     </Project>
   </TemplateContent>
   <WizardExtension>

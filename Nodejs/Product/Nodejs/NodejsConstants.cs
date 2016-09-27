@@ -15,6 +15,7 @@
 //*********************************************************//
 
 using System;
+using System.IO;
 
 namespace Microsoft.NodejsTools {
     internal class NodejsConstants {
@@ -26,6 +27,7 @@ namespace Microsoft.NodejsTools {
 
         internal const string JavaScript = "JavaScript";
         internal const string CSS = "CSS";
+        internal const string HTML = "HTML";
         internal const string Nodejs = "Node.js";
 
         internal const string IssueTrackerUrl = "https://go.microsoft.com/fwlink/?LinkId=507637";
@@ -44,9 +46,6 @@ namespace Microsoft.NodejsTools {
         internal const string NodeModulesFolder = "node_modules";
         internal const string NodeModulesStagingFolder = "node_modules\\.staging\\";
         internal const string BowerComponentsFolder = "bower_components";
-        internal const string AnalysisIgnoredDirectories = "AnalysisIgnoredDirectories";
-        internal const string AnalysisMaxFileSize = "AnalysisMaxFileSize";
-        internal const string DefaultIntellisenseCompletionCommittedBy = "{}[]().,:;+-*/%&|^!~=<>?@#'\"\\";
 
         /// <summary>
         /// The name of the package.json file
@@ -56,9 +55,6 @@ namespace Microsoft.NodejsTools {
         internal const string DefaultPackageMainFile = "index.js";
 
         internal const string BaseRegistryKey = "NodejsTools";
-
-        internal const string NodejsHiddenUserModule = "nodejs_tools_for_visual_studio_hidden_usermodule_";
-        internal const string NodejsHiddenUserModuleInstance = "nodejs_tools_for_visual_studio_hidden_module_instance_";
 
         internal const string TypeScriptCfgProperty = "CfgPropertyPagesGuidsAddTypeScript";
 
@@ -72,6 +68,33 @@ namespace Microsoft.NodejsTools {
         internal const string TypeScript = "TypeScript";
 
         internal const string NodeToolsProcessIdEnvironmentVariable = "_NTVS_PID";
+
+        public static string NtvsLocalAppData {
+            get {
+                return Path.Combine(
+                    System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
+                    "Microsoft",
+                    "Node.js Tools");
+            }
+        }
+
+        /// <summary>
+        /// Path to the private package where NTVS tools are installed.
+        /// </summary>
+        public static string ExternalToolsPath {
+            get {
+                return Path.Combine(NtvsLocalAppData, "ExternalTools");
+            }
+
+        }
+        /// <summary>
+        /// Path to where NTVS caches Npm data.
+        /// </summary>
+        public static string NpmCachePath {
+            get {
+                return Path.Combine(NtvsLocalAppData, "NpmCache");
+            }
+        }
 
         /// <summary>
         /// Checks whether a relative and double-backslashed seperated path contains a folder name.

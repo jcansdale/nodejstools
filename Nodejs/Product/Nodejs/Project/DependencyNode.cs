@@ -93,9 +93,7 @@ namespace Microsoft.NodejsTools.Project {
             get { return PkgCmdId.menuIdNpm; }
         }
 
-#if DEV14_OR_LATER
         [Obsolete]
-#endif
         public override object GetIconHandle(bool open) {
             int imageIndex = _projectNode.ImageIndexFromNameDictionary[NodejsProjectImageName.Dependency];
             if (Package.IsMissing) {
@@ -149,9 +147,7 @@ namespace Microsoft.NodejsTools.Project {
                 if (null == _parent) {
                     switch (cmd) {
                         case PkgCmdId.cmdidNpmInstallSingleMissingModule:
-                            if (GetPropertiesObject().IsGlobalInstall) {
-                                result = QueryStatusResult.SUPPORTED | QueryStatusResult.INVISIBLE;
-                            } else if (null == _projectNode.ModulesNode
+                            if (null == _projectNode.ModulesNode
                                 || _projectNode.ModulesNode.IsCurrentStateASuppressCommandsMode()) {
                                 result = QueryStatusResult.SUPPORTED;
                             } else {

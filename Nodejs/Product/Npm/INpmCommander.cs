@@ -16,8 +16,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Microsoft.NodejsTools.Npm {
@@ -49,16 +47,11 @@ namespace Microsoft.NodejsTools.Npm {
             DependencyType type,
             bool saveToPackageJson);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="packageName"></param>
-        /// <param name="versionRange"></param>
-        /// <exception cref="PackageJsonException">If there is an error reading a package.json file when modules are refreshed.</exception>
-        /// <returns></returns>
-        Task<bool> InstallGlobalPackageByVersionAsync(
+        Task<bool> InstallPackageToFolderByVersionAsync(
+            string pathToRootDirectory,
             string packageName,
-            string versionRange);
+            string versionRange,
+            bool saveToPackageJson);
 
         /// <summary>
         /// 
@@ -67,8 +60,6 @@ namespace Microsoft.NodejsTools.Npm {
         /// <exception cref="PackageJsonException">If there is an error reading a package.json file when modules are refreshed.</exception>
         /// <returns></returns>
         Task<bool> UninstallPackageAsync(string packageName);
-
-        Task<bool> UninstallGlobalPackageAsync(string packageName);
 
         Task<IPackageCatalog> GetCatalogAsync(bool forceDownload, IProgress<string> progress);
 
@@ -81,14 +72,6 @@ namespace Microsoft.NodejsTools.Npm {
         /// <exception cref="PackageJsonException">If there is an error reading a package.json file when modules are refreshed.</exception>
         /// <returns></returns>
         Task<bool> UpdatePackagesAsync(IEnumerable<IPackage> packages);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="packages"></param>
-        /// <exception cref="PackageJsonException">If there is an error reading a package.json file when modules are refreshed.</exception>
-        /// <returns></returns>
-        Task<bool> UpdateGlobalPackagesAsync(IEnumerable<IPackage> packages);
 
         /// <summary>
         /// 

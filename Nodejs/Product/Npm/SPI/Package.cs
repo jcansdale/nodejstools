@@ -28,8 +28,9 @@ namespace Microsoft.NodejsTools.Npm.SPI {
             string fullPathToRootDirectory,
             bool showMissingDevOptionalSubPackages,
             Dictionary<string, ModuleInfo> allModules = null,
-            int depth = 0)
-            : base(fullPathToRootDirectory, showMissingDevOptionalSubPackages, allModules, depth) {
+            int depth = 0,
+            int maxDepth = 1)
+            : base(fullPathToRootDirectory, showMissingDevOptionalSubPackages, allModules, depth, maxDepth) {
             _parent = parent;
         }
 
@@ -49,8 +50,7 @@ namespace Microsoft.NodejsTools.Npm.SPI {
         public bool IsListedInParentPackageJson {
             get {
                 IPackageJson parentPackageJson = _parent.PackageJson;
-                return _parent is IGlobalPackages ||
-                       (null != parentPackageJson && parentPackageJson.AllDependencies.Contains(Name));
+                return (null != parentPackageJson && parentPackageJson.AllDependencies.Contains(Name));
             }
         }
 

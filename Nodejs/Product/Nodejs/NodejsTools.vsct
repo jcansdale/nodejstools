@@ -36,6 +36,10 @@
         <Parent guid="guidNodeToolsCmdSet" id="RemoteDebugProxyMenu"/>
       </Group>
 
+      <Group guid="guidNodeToolsCmdSet" id="NtvsHelpGroup" priority="0x0500">
+        <Parent guid="guidNodeToolsCmdSet" id="ToolsMenu"/>
+      </Group>
+
       <Group guid="guidSHLMainMenu" id="IDG_VS_CTXT_PROJWIN_SCOPE" priority="0x0500">
         <Parent guid="guidNodeToolsNpmCmdSet" id="NpmMenu"/>
       </Group>
@@ -50,6 +54,10 @@
       
       <Group guid="guidSHLMainMenu" id="IDG_VS_MNUDES_PROPERTIES" priority="0x0800">
         <Parent guid="guidNodeToolsNpmCmdSet" id="NpmMenu"/>
+      </Group>
+
+      <Group guid="guidNodeToolsCmdSet" id="AddNewFileGroup" priority="0x0900">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CSCD_PROJECT_ADD"/>
       </Group>
     </Groups>
 
@@ -86,6 +94,34 @@
               <CommandFlag>DefaultInvisible</CommandFlag>
               <CommandFlag>DynamicVisibility</CommandFlag>
           If you do not want an image next to your command, remove the Icon node or set it to <Icon guid="guidOfficeIcon" id="msotcidNoIcon" /> -->
+        
+      <Button guid="guidNodeToolsCmdSet" id="cmdidAddNewJavaScriptFileCommand" priority="0x0550" type="Button">
+        <Parent guid="guidNodeToolsCmdSet" id="AddNewFileGroup"/>
+        <Strings>
+          <ButtonText>JavaScript File...</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidNodeToolsCmdSet" id="cmdidAddNewTypeScriptFileCommand" priority="0x0551" type="Button">
+        <Parent guid="guidNodeToolsCmdSet" id="AddNewFileGroup"/>
+        <Strings>
+          <ButtonText>TypeScript File...</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidNodeToolsCmdSet" id="cmdidAddNewHTMLFileCommand" priority="0x0552" type="Button">
+        <Parent guid="guidNodeToolsCmdSet" id="AddNewFileGroup"/>
+        <Strings>
+          <ButtonText>HTML File...</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidNodeToolsCmdSet" id="cmdidAddNewCSSFileCommand" priority="0x0553" type="Button">
+        <Parent guid="guidNodeToolsCmdSet" id="AddNewFileGroup"/>
+        <Strings>
+          <ButtonText>CSS File...</ButtonText>
+        </Strings>
+      </Button>
 
       <Button guid="guidNodeToolsCmdSet" id="cmdidSetAsNodejsStartupFile" priority="0x0300" type="Button">
         <Parent guid="guidNodeToolsCmdSet" id="CodeFileGroup"/>
@@ -186,11 +222,27 @@
         </Strings>
       </Button>
 
+      <Button guid="guidNodeToolsCmdSet" id="cmdidDocumentation" priority="0x004" type="Button">
+        <Parent guid="guidNodeToolsCmdSet" id="NtvsHelpGroup"/>
+        <Strings>
+          <ButtonText>&amp;Documentation...</ButtonText>
+          <CommandName>Documentation...</CommandName>
+        </Strings>
+      </Button>
+
       <Button guid="guidNodeToolsCmdSet" id="cmdidSurveyNews" priority="0x005" type="Button">
-        <Parent guid="guidNodeToolsCmdSet" id="ToolsMenuItemsGroup"/>
+        <Parent guid="guidNodeToolsCmdSet" id="NtvsHelpGroup"/>
         <Strings>
           <ButtonText>Survey/&amp;News...</ButtonText>
           <CommandName>Survey/News...</CommandName>
+        </Strings>
+      </Button>
+
+      <Button guid="guidNodeToolsCmdSet" id="cmdidSendFeedback" priority="0x006" type="Button">
+        <Parent guid="guidNodeToolsCmdSet" id="NtvsHelpGroup"/>
+        <Strings>
+          <ButtonText>&amp;Report Issue or Send Feedback...</ButtonText>
+          <CommandName>Report Issue or Send Feedback...</CommandName>
         </Strings>
       </Button>
 
@@ -363,7 +415,13 @@
       <IDSymbol name="cmdidAzureExplorerAttachNodejsDebugger" value="0x0207" />
       <IDSymbol name="cmdidDiagnostics" value="0x0208" />
       <IDSymbol name="cmdidSetAsContent" value="0x0209" />
-       <IDSymbol name="cmdidSetAsCompile" value="0x0210" />
+      <IDSymbol name="cmdidSetAsCompile" value="0x0210" />
+      <IDSymbol name="cmdidAddNewJavaScriptFileCommand" value="0x0211" />
+      <IDSymbol name="cmdidAddNewTypeScriptFileCommand" value="0x0212" />
+      <IDSymbol name="cmdidAddNewHTMLFileCommand" value="0x0213" />
+      <IDSymbol name="cmdidAddNewCSSFileCommand" value="0x0214" />
+      <IDSymbol name="cmdidSendFeedback" value="0x0215" />
+      <IDSymbol name="cmdidDocumentation" value="0x0216" />
 
       <!-- Shared commands, defined in CommonConstants.cs -->
       <IDSymbol name="cmdidAddExistingFolder" value="0x10001" />
@@ -375,6 +433,8 @@
       <IDSymbol name="RemoteDebugProxyGroup" value="0x1011" />
       <IDSymbol name="CodeFileGroup" value="0x1012" />
       <IDSymbol name="AzureExplorerCommandsGroup" value="0x1015" />
+      <IDSymbol name="AddNewFileGroup" value="0x1016"/>
+      <IDSymbol name="NtvsHelpGroup" value="0x1017" />
 
       <!-- Menus -->
       <IDSymbol name="ToolsMenu" value ="0x2001" />

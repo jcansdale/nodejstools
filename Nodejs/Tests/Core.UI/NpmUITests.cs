@@ -16,27 +16,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Threading;
-using Microsoft.NodejsTools;
 using Microsoft.NodejsTools.Npm;
 using Microsoft.NodejsTools.NpmUI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudioTools;
 using Moq;
 using NpmTests;
-using TestUtilities;
-using TestUtilities.SharedProject;
 using TestUtilities.UI;
-using TestUtilities.UI.Nodejs;
 
 namespace Microsoft.Nodejs.Tests.UI {
     [TestClass]
@@ -184,9 +173,6 @@ namespace Microsoft.Nodejs.Tests.UI {
                 packageMock.Object
             };
 
-            var globalPackages = new Mock<IGlobalPackages>();
-            globalPackages.Setup(mock => mock.Modules).Returns((new Mock<INodeModules>()).Object);
-
             var rootPackage = new Mock<IRootPackage>();
             rootPackage.Setup(mock => mock.Modules).Returns((new Mock<INodeModules>()).Object);
 
@@ -194,7 +180,6 @@ namespace Microsoft.Nodejs.Tests.UI {
 
             npmControllerMock.Setup(mock => mock.MostRecentlyLoadedCatalog).Returns(new MockPackageCatalog(packageList));
 
-            npmControllerMock.Setup(mock => mock.GlobalPackages).Returns(globalPackages.Object);
             npmControllerMock.Setup(mock => mock.RootPackage).Returns(rootPackage.Object);
 
             return npmControllerMock;

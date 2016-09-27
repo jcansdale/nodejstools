@@ -20,16 +20,14 @@ namespace Microsoft.NodejsTools.Npm {
     public static class RootPackageFactory {
         public static IRootPackage Create(
             string fullPathToRootDirectory,
-            bool showMissingDevOptionalSubPackages = false) {
+            bool showMissingDevOptionalSubPackages = false,
+            int maxDepth = 1) {
             return new RootPackage(
                 fullPathToRootDirectory,
-                showMissingDevOptionalSubPackages);
-        }
-
-        public static IGlobalPackages Create(
-            string fullPathToGlobalPackages) {
-            return new GlobalPackages(
-                fullPathToGlobalPackages);
+                showMissingDevOptionalSubPackages,
+                null,
+                0,
+                maxDepth);
         }
     }
 }

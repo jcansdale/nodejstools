@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -33,11 +33,12 @@
     <Compile Include="routes\users.js" />
     <Compile Include="bin\www" />
     <Content Include="package.json" />
-    <Content Include="public\stylesheets\style.styl" />
+    <Content Include="public\stylesheets\main.css" />
     <Content Include="README.md" />
-    <Content Include="views\index.jade" />
-    <Content Include="views\layout.jade" />
-    <Content Include="views\error.jade" />
+    <Content Include="typings.json" />
+    <Content Include="views\index.pug" />
+    <Content Include="views\layout.pug" />
+    <Content Include="views\error.pug" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="public\" />

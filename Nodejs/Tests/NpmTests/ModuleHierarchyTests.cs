@@ -15,7 +15,6 @@
 //*********************************************************//
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.NodejsTools.Npm;
 using Microsoft.NodejsTools.Npm.SPI;
@@ -157,7 +156,7 @@ namespace NpmTests {
                 var rootDir = FilesystemPackageJsonTestHelpers.CreateRootPackage(manager, PkgSingleRecursiveDependency);
                 RunNpmInstall(rootDir);
 
-                var pkg = RootPackageFactory.Create(rootDir);
+                var pkg = RootPackageFactory.Create(rootDir, false, int.MaxValue);
 
                 var json = pkg.PackageJson;
                 var dependencies = json.AllDependencies;

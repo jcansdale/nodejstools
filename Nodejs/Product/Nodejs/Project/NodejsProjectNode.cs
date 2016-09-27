@@ -24,7 +24,6 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.NodejsTools.Intellisense;
 using Microsoft.NodejsTools.Npm;
 using Microsoft.NodejsTools.ProjectWizard;
 using Microsoft.VisualStudio;
@@ -34,19 +33,16 @@ using Microsoft.VisualStudioTools.Project;
 using Microsoft.VisualStudioTools.Project.Automation;
 using MSBuild = Microsoft.Build.Evaluation;
 using VsCommands = Microsoft.VisualStudio.VSConstants.VSStd97CmdID;
-#if DEV14_OR_LATER
+using Microsoft.NodejsTools.Options;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Imaging;
-#endif
 
 namespace Microsoft.NodejsTools.Project {
     class NodejsProjectNode : CommonProjectNode, VsWebSite.VSWebSite, INodePackageModulesCommands, IVsBuildPropertyStorage {
-        private VsProjectAnalyzer _analyzer;
         private readonly HashSet<string> _warningFiles = new HashSet<string>();
         private readonly HashSet<string> _errorFiles = new HashSet<string>();
         private string[] _analysisIgnoredDirs = new string[1] { NodejsConstants.NodeModulesStagingFolder };
         private int _maxFileSize = 1024 * 512;
-        internal readonly RequireCompletionCache _requireCompletionCache = new RequireCompletionCache();
         private string _intermediateOutputPath;
         private readonly Dictionary<NodejsProjectImageName, int> _imageIndexFromNameDictionary = new Dictionary<NodejsProjectImageName, int>();
 
@@ -56,20 +52,13 @@ namespace Microsoft.NodejsTools.Project {
 #endif
 
         // We delay analysis until things calm down in the node_modules folder.
-        internal readonly Queue<NodejsFileNode> DelayedAnalysisQueue = new Queue<NodejsFileNode>();
+#pragma warning disable 0414
         private readonly object _idleNodeModulesLock = new object();
         private volatile bool _isIdleNodeModules = false;
         private Timer _idleNodeModulesTimer;
+#pragma warning restore 0414
 
-        public NodejsProjectNode(NodejsProjectPackage package)
-            : base(
-                  package,
-#if DEV14_OR_LATER
-                  null
-#else
-                  Utilities.GetImageList(typeof(NodejsProjectNode).Assembly.GetManifestResourceStream("Microsoft.NodejsTools.Resources.Icons.NodejsImageList.bmp"))
-#endif
-        ) {
+        public NodejsProjectNode(NodejsProjectPackage package) : base(package, null) {
             Type projectNodePropsType = typeof(NodejsProjectNodeProperties);
             AddCATIDMapping(projectNodePropsType, projectNodePropsType.GUID);
 #pragma warning disable 0612
@@ -78,38 +67,19 @@ namespace Microsoft.NodejsTools.Project {
 
         }
 
-        public VsProjectAnalyzer Analyzer {
-            get {
-                return _analyzer;
-            }
-        }
-
         private void OnIdleNodeModules(object state) {
             lock (_idleNodeModulesLock) {
                 _isIdleNodeModules = true;
-            }
-
-            while (DelayedAnalysisQueue.Count > 0) {
-                lock (_idleNodeModulesLock) {
-                    if (!_isIdleNodeModules) {
-                        return;
-                    }
-                }
-                var fileNode = DelayedAnalysisQueue.Dequeue();
-                if (fileNode != null) {
-                    fileNode.Analyze();
-                }
             }
 #if DEV14
             TryToAcquireCurrentTypings();
 #endif
         }
 
-
         internal bool ShouldAcquireTypingsAutomatically {
             get {
 #if DEV14
-                if (NodejsPackage.Instance.IntellisenseOptionsPage.AnalysisLevel != Options.AnalysisLevel.Preview) {
+                if (!NodejsPackage.Instance.IntellisenseOptionsPage.EnableAutomaticTypingsAcquisition) {
                     return false;
                 }
 
@@ -145,15 +115,67 @@ namespace Microsoft.NodejsTools.Project {
         }
 
         private void TryToAcquireTypings(IEnumerable<string> packages) {
-            if (ShouldAcquireTypingsAutomatically && TypingsAcquirer != null) {
-                TypingsAcquirer
-                    .AcquireTypings(packages, null /*redirector*/)
-                    .ContinueWith(x => x);
+            if (!ShouldAcquireTypingsAutomatically || TypingsAcquirer == null) {
+                return;
+            }
+
+            IVsStatusbar statusBar = (IVsStatusbar)NodejsPackage.Instance.GetService(typeof(SVsStatusbar));
+            object statusIcon = (short)Constants.SBAI_General;
+
+            bool statusSetSuccess = TrySetTypingsLoadingStatusBar(statusBar, statusIcon);
+
+            var typingsPath = Path.Combine(this.ProjectHome, "typings");
+            bool hadExistingTypingsFolder = Directory.Exists(typingsPath);
+            TypingsAcquirer
+                .AcquireTypings(packages, NpmOutputPane)
+                .ContinueWith(x => {
+                    if (NodejsPackage.Instance.IntellisenseOptionsPage.ShowTypingsInfoBar &&
+                        x.Result &&
+                        (!hadExistingTypingsFolder && Directory.Exists(typingsPath))) {
+                        NodejsPackage.Instance.GetUIThread().Invoke(() => {
+                            TypingsInfoBar.Instance.ShowInfoBar();
+                        });
+                    }
+                    TrySetTypingsLoadedStatusBar(statusBar, statusIcon, statusSetSuccess);
+                });
+        }
+
+        private static bool TrySetTypingsLoadingStatusBar(IVsStatusbar statusBar, object icon) {
+            if (statusBar != null && !IsStatusBarFrozen(statusBar)) {
+                statusBar.SetText(SR.GetString(SR.StatusTypingsLoading));
+                statusBar.Animation(1, ref icon);
+                if (ErrorHandler.Succeeded(statusBar.FreezeOutput(1))) {
+                    return true;
+                }
+                Debug.Fail("Failed to freeze typings status bar");
+            }
+            return false;
+        }
+
+        private static void TrySetTypingsLoadedStatusBar(IVsStatusbar statusBar, object icon, bool statusSetSuccess) {
+            if (statusBar != null && (statusSetSuccess || !IsStatusBarFrozen(statusBar))) {
+                if (!ErrorHandler.Succeeded(statusBar.FreezeOutput(0))) {
+                    Debug.Fail("Failed to unfreeze typings status bar");
+                    return;
+                }
+
+                statusBar.Animation(0, ref icon);
+                statusBar.SetText(SR.GetString(SR.StatusTypingsLoaded));
             }
         }
 
+        private static bool IsStatusBarFrozen(IVsStatusbar statusBar) {
+            int frozen;
+            statusBar.IsFrozen(out frozen);
+            return frozen == 1;
+        }
+
         private void TryToAcquireCurrentTypings() {
-            var controller = ModulesNode != null ? ModulesNode.NpmController : null;
+            if (!ShouldAcquireTypingsAutomatically || TypingsAcquirer == null) {
+                return;
+            }
+
+            var controller = ModulesNode?.NpmController;
             if (controller == null) {
                 return;
             }
@@ -165,16 +187,11 @@ namespace Microsoft.NodejsTools.Project {
                     || package.IsDevDependency
                     || !package.IsListedInParentPackageJson);
 
-            TryToAcquireTypings(currentPackages.Select(package => package.Name));
+            TryToAcquireTypings(currentPackages.Select(package => package.Name).Concat(new[] { "node" }));
         }
 #endif
 
-        internal void EnqueueForDelayedAnalysis(NodejsFileNode fileNode) {
-            DelayedAnalysisQueue.Enqueue(fileNode);
-            RestartIdleNodeModulesTimer();
-        }
-
-        private void RestartIdleNodeModulesTimer() {
+        private void NodeModules_FinishedRefresh(object sender, EventArgs e) {
             lock (_idleNodeModulesLock) {
                 _isIdleNodeModules = false;
 
@@ -209,9 +226,7 @@ namespace Microsoft.NodejsTools.Project {
             get { return _imageIndexFromNameDictionary; }
         }
 
-#if DEV14_OR_LATER
         [Obsolete]
-#endif
         private void InitNodejsProjectImages() {
             // HACK: https://nodejstools.codeplex.com/workitem/1268
 
@@ -253,16 +268,6 @@ namespace Microsoft.NodejsTools.Project {
             }
         }
 
-#if !DEV14_OR_LATER
-        public override int ImageIndex {
-            get {
-                if (string.Equals(GetProjectProperty(NodejsConstants.EnableTypeScript), "true", StringComparison.OrdinalIgnoreCase)) {
-                    return ImageIndexFromNameDictionary[NodejsProjectImageName.TypeScriptProjectFile];
-                }
-                return base.ImageIndex;
-            }
-        }
-#endif
         internal override string IssueTrackerUrl {
             get { return NodejsConstants.IssueTrackerUrl; }
         }
@@ -399,16 +404,6 @@ namespace Microsoft.NodejsTools.Project {
             return res;
         }
 
-        public override CommonFileNode CreateNonCodeFileNode(ProjectElement item) {
-            string fileName = item.Url;
-            if (Path.GetFileName(fileName).Equals(NodejsConstants.PackageJsonFile, StringComparison.OrdinalIgnoreCase) && 
-                !fileName.Contains(NodejsConstants.NodeModulesStagingFolder)) {
-                return new PackageJsonFileNode(this, item);
-            }
-
-            return base.CreateNonCodeFileNode(item);
-        }
-
         public override string GetProjectName() {
             return "NodeProject";
         }
@@ -475,9 +470,6 @@ namespace Microsoft.NodejsTools.Project {
         }
 
         public override int InitializeForOuter(string filename, string location, string name, uint flags, ref Guid iid, out IntPtr projectPointer, out int canceled) {
-            NodejsPackage.Instance.IntellisenseOptionsPage.AnalysisLevelChanged += IntellisenseOptionsPageAnalysisLevelChanged;
-            NodejsPackage.Instance.IntellisenseOptionsPage.AnalysisLogMaximumChanged += AnalysisLogMaximumChanged;
-            NodejsPackage.Instance.IntellisenseOptionsPage.SaveToDiskChanged += IntellisenseOptionsPageSaveToDiskChanged;
             NodejsPackage.Instance.GeneralOptionsPage.ShowBrowserAndNodeLabelsChanged += ShowBrowserAndNodeLabelsChanged;
 
             return base.InitializeForOuter(filename, location, name, flags, ref iid, out projectPointer, out canceled);
@@ -490,11 +482,6 @@ namespace Microsoft.NodejsTools.Project {
                 // is not properly set before the FileNodes get created in base.Reload()
                 UpdateProjectNodeFromProjectProperties();
 
-                if (_analyzer != null && _analyzer.RemoveUser()) {
-                    _analyzer.Dispose();
-                }
-                _analyzer = CreateNewAnalyser();
-
                 base.Reload();
 
                 SyncFileSystem();
@@ -505,93 +492,11 @@ namespace Microsoft.NodejsTools.Project {
 #if DEV14
                 TryToAcquireTypings(new[] { "node" });
 #endif
-
-                // scan for files which were loaded from cached analysis but no longer
-                // exist and remove them.
-                _analyzer.ReloadComplete();
             }
-        }
-
-        private VsProjectAnalyzer CreateNewAnalyser() {
-            var analyzer = new VsProjectAnalyzer(NodejsPackage.Instance.IntellisenseOptionsPage.AnalysisLevel, NodejsPackage.Instance.IntellisenseOptionsPage.SaveToDisk, ProjectFolder);
-            analyzer.MaxLogLength = NodejsPackage.Instance.IntellisenseOptionsPage.AnalysisLogMax;
-            LogAnalysisLevel(analyzer);
-            return analyzer;
         }
 
         private void UpdateProjectNodeFromProjectProperties() {
             _intermediateOutputPath = Path.Combine(ProjectHome, GetProjectProperty("BaseIntermediateOutputPath"));
-
-            var ignoredPaths = GetProjectProperty(NodejsConstants.AnalysisIgnoredDirectories);
-
-            if (!string.IsNullOrWhiteSpace(ignoredPaths)) {
-                _analysisIgnoredDirs = _analysisIgnoredDirs.Append(ignoredPaths.Split(';').Select(x => '\\' + x + '\\').ToArray());
-            }
-
-            var maxFileSizeProp = GetProjectProperty(NodejsConstants.AnalysisMaxFileSize);
-            int maxFileSize;
-            if (maxFileSizeProp != null && Int32.TryParse(maxFileSizeProp, out maxFileSize)) {
-                _maxFileSize = maxFileSize;
-            }
-        }
-
-        private void Reanalyze(HierarchyNode node, VsProjectAnalyzer newAnalyzer) {
-            if (node != null) {
-                for (var child = node.FirstChild; child != null; child = child.NextSibling) {
-                    if (child is PackageJsonFileNode) {
-                        ((PackageJsonFileNode)child).AnalyzePackageJson(newAnalyzer);
-                    } else if (child is NodejsFileNode) {
-                        if (((NodejsFileNode)child).ShouldAnalyze) {
-                            newAnalyzer.AnalyzeFile(child.Url, !child.IsNonMemberItem);
-                        }
-                    }
-
-                    Reanalyze(child, newAnalyzer);
-                }
-            }
-        }
-
-        private static void LogAnalysisLevel(VsProjectAnalyzer analyzer) {
-            if (analyzer != null) {
-                NodejsPackage.Instance.Logger.LogEvent(Logging.NodejsToolsLogEvent.AnalysisLevel, (int)analyzer.AnalysisLevel);
-            }
-        }
-
-        /*
-         * Needed if we switch to per project Analysis levels
-        internal NodejsTools.Options.AnalysisLevel AnalysisLevel(){
-            var analyzer = _analyzer;
-            if (_analyzer != null) {
-                return _analyzer.AnalysisLevel;
-            }
-            return NodejsTools.Options.AnalysisLevel.None;
-        }
-        */
-        private void IntellisenseOptionsPageAnalysisLevelChanged(object sender, EventArgs e) {
-            var oldAnalyzer = _analyzer;
-            _analyzer = null;
-
-            var analyzer = CreateNewAnalyser();
-            Reanalyze(this, analyzer);
-            if (oldAnalyzer != null) {
-                analyzer.SwitchAnalyzers(oldAnalyzer);
-                if (oldAnalyzer.RemoveUser()) {
-                    oldAnalyzer.Dispose();
-                }
-            }
-            _analyzer = analyzer;
-        }
-
-        private void AnalysisLogMaximumChanged(object sender, EventArgs e) {
-            if (_analyzer != null) {
-                _analyzer.MaxLogLength = NodejsPackage.Instance.IntellisenseOptionsPage.AnalysisLogMax;
-            }
-        }
-
-        private void IntellisenseOptionsPageSaveToDiskChanged(object sender, EventArgs e) {
-            if (_analyzer != null) {
-                _analyzer.SaveToDisk = NodejsPackage.Instance.IntellisenseOptionsPage.SaveToDisk;
-            }
         }
 
         private void ShowBrowserAndNodeLabelsChanged(object sender, EventArgs e) {
@@ -698,10 +603,6 @@ namespace Microsoft.NodejsTools.Project {
                 nestedModulesDepth = ModulesNode.NpmController.RootPackage.Modules.GetDepth(fileNode.Url);
             }
 
-            if (_analyzer != null && _analyzer.Limits.IsPathExceedNestingLimit(nestedModulesDepth)) {
-                return false;
-            }
-
             return true;
         }
 
@@ -724,10 +625,11 @@ namespace Microsoft.NodejsTools.Project {
                 ModulesNode = new NodeModulesNode(this);
                 AddChild(ModulesNode);
                 _idleNodeModulesTimer = new Timer(OnIdleNodeModules);
+                ModulesNode.NpmController.FinishedRefresh += NodeModules_FinishedRefresh;
             }
         }
 
-#region VSWebSite Members
+        #region VSWebSite Members
 
         // This interface is just implemented so we don't get normal profiling which
         // doesn't work with our projects anyway.
@@ -794,64 +696,12 @@ namespace Microsoft.NodejsTools.Project {
             get { throw new NotImplementedException(); }
         }
 
-#endregion
+        #endregion
 
         Task INodePackageModulesCommands.InstallMissingModulesAsync() {
             //Fire off the command to update the missing modules
             //  through NPM
             return ModulesNode.InstallMissingModules();
-        }
-
-        private void HookErrorsAndWarnings(VsProjectAnalyzer res) {
-            res.ErrorAdded += OnErrorAdded;
-            res.ErrorRemoved += OnErrorRemoved;
-            res.WarningAdded += OnWarningAdded;
-            res.WarningRemoved += OnWarningRemoved;
-        }
-
-        private void UnHookErrorsAndWarnings(VsProjectAnalyzer res) {
-            res.ErrorAdded -= OnErrorAdded;
-            res.ErrorRemoved -= OnErrorRemoved;
-            res.WarningAdded -= OnWarningAdded;
-            res.WarningRemoved -= OnWarningRemoved;
-        }
-
-        private void OnErrorAdded(object sender, FileEventArgs args) {
-            if (_diskNodes.ContainsKey(args.Filename)) {
-                _errorFiles.Add(args.Filename);
-            }
-        }
-
-        private void OnErrorRemoved(object sender, FileEventArgs args) {
-            _errorFiles.Remove(args.Filename);
-        }
-
-        private void OnWarningAdded(object sender, FileEventArgs args) {
-            if (_diskNodes.ContainsKey(args.Filename)) {
-                _warningFiles.Add(args.Filename);
-            }
-        }
-
-        private void OnWarningRemoved(object sender, FileEventArgs args) {
-            _warningFiles.Remove(args.Filename);
-        }
-
-        /// <summary>
-        /// File names within the project which contain errors.
-        /// </summary>
-        public HashSet<string> ErrorFiles {
-            get {
-                return _errorFiles;
-            }
-        }
-
-        /// <summary>
-        /// File names within the project which contain warnings.
-        /// </summary>
-        public HashSet<string> WarningFiles {
-            get {
-                return _warningFiles;
-            }
         }
 
         internal struct LongPathInfo {
@@ -992,23 +842,6 @@ namespace Microsoft.NodejsTools.Project {
 
         protected override void Dispose(bool disposing) {
             if (disposing) {
-                if (_analyzer != null) {
-                    UnHookErrorsAndWarnings(_analyzer);
-                    if (WarningFiles.Count > 0 || ErrorFiles.Count > 0) {
-                        foreach (var file in WarningFiles.Concat(ErrorFiles)) {
-                            var node = FindNodeByFullPath(file) as NodejsFileNode;
-                            if (node != null) {
-                                //_analyzer.RemoveErrors(node.GetAnalysis(), suppressUpdate: false);
-                            }
-                        }
-                    }
-
-                    if (_analyzer.RemoveUser()) {
-                        _analyzer.Dispose();
-                    }
-                    _analyzer = null;
-                }
-
                 lock (_idleNodeModulesLock) {
                     if (_idleNodeModulesTimer != null) {
                         _idleNodeModulesTimer.Dispose();
@@ -1016,9 +849,6 @@ namespace Microsoft.NodejsTools.Project {
                     _idleNodeModulesTimer = null;
                 }
 
-                NodejsPackage.Instance.IntellisenseOptionsPage.SaveToDiskChanged -= IntellisenseOptionsPageSaveToDiskChanged;
-                NodejsPackage.Instance.IntellisenseOptionsPage.AnalysisLevelChanged -= IntellisenseOptionsPageAnalysisLevelChanged;
-                NodejsPackage.Instance.IntellisenseOptionsPage.AnalysisLogMaximumChanged -= AnalysisLogMaximumChanged;
                 NodejsPackage.Instance.GeneralOptionsPage.ShowBrowserAndNodeLabelsChanged -= ShowBrowserAndNodeLabelsChanged;
 
                 OnDispose?.Invoke(this, EventArgs.Empty);
@@ -1026,8 +856,6 @@ namespace Microsoft.NodejsTools.Project {
                 RemoveChild(ModulesNode);
                 ModulesNode?.Dispose();
                 ModulesNode = null;
-
-                DelayedAnalysisQueue.Clear();
 #if DEV14
                 _typingsAcquirer = null;
 #endif
@@ -1086,6 +914,11 @@ namespace Microsoft.NodejsTools.Project {
                             }
                         }
                         break;
+						case PkgCmdId.cmdidAddNewJavaScriptFileCommand: 
+					case PkgCmdId.cmdidAddNewTypeScriptFileCommand: 
+					case PkgCmdId.cmdidAddNewHTMLFileCommand: 
+					case PkgCmdId.cmdidAddNewCSSFileCommand: 
+						return QueryStatusResult.SUPPORTED | QueryStatusResult.ENABLED; 
                 }
             }
 
@@ -1155,6 +988,27 @@ namespace Microsoft.NodejsTools.Project {
                         );
                         handled = true;
                         return VSConstants.S_OK;
+
+                    case PkgCmdId.cmdidAddNewJavaScriptFileCommand:
+                        NewFileMenuGroup.NewFileUtilities.CreateNewJavaScriptFile(projectNode: this, containerId: selectedNodes[0].ID);
+                        handled = true;
+                        return VSConstants.S_OK;
+
+                    case PkgCmdId.cmdidAddNewTypeScriptFileCommand:
+                        NewFileMenuGroup.NewFileUtilities.CreateNewTypeScriptFile(projectNode: this, containerId: selectedNodes[0].ID);
+                        handled = true;
+                        return VSConstants.S_OK;
+
+                    case PkgCmdId.cmdidAddNewHTMLFileCommand:
+                        NewFileMenuGroup.NewFileUtilities.CreateNewHTMLFile(projectNode: this, containerId: selectedNodes[0].ID);
+                        handled = true;
+                        return VSConstants.S_OK;
+
+                    case PkgCmdId.cmdidAddNewCSSFileCommand:
+                        NewFileMenuGroup.NewFileUtilities.CreateNewCSSFile(projectNode: this, containerId: selectedNodes[0].ID);
+                        handled = true;
+                        return VSConstants.S_OK;
+
                 }
             }
 
@@ -1199,5 +1053,18 @@ namespace Microsoft.NodejsTools.Project {
             return base.Build(config, target);
         }
 
+
+        // This is the package manager pane that ships with VS2015, and we should print there if available.
+        private static readonly Guid VSPackageManagerPaneGuid = new Guid("C7E31C31-1451-4E05-B6BE-D11B6829E8BB");
+
+        internal OutputWindowRedirector NpmOutputPane {
+            get {
+                try {
+                    return OutputWindowRedirector.Get(Site, VSPackageManagerPaneGuid, "Bower/npm");
+                } catch (InvalidOperationException) {
+                    return null;
+                }
+            }
+        }
     }
 }

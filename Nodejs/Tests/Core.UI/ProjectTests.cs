@@ -15,17 +15,14 @@
 //*********************************************************//
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows.Automation;
 using EnvDTE;
 using Microsoft.NodejsTools;
 using Microsoft.NodejsTools.Project;
-using Microsoft.NodejsTools.Repl;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestUtilities;
@@ -41,42 +38,6 @@ namespace Microsoft.Nodejs.Tests.UI {
             AssertListener.Initialize();
             NodejsTestData.Deploy();
         }
-
-        /// <summary>
-        /// https://nodejstools.codeplex.com/workitem/270
-        /// </summary>
-        [TestMethod, Priority(0), TestCategory("Core"), TestCategory("Ignore")]
-        [HostType("VSTestHost")]
-        public void SnippetsDisabled() {
-            using (var app = new VisualStudioApp()) {
-                Window window;
-                var openFile = OpenProjectItem(app, "server.js", out window);
-
-                openFile.MoveCaret(7, 1);
-
-                // we need to ensure the snippets are initialized by starting
-                // and dismissing an intellisense session.
-                Keyboard.Type(Keyboard.CtrlSpace.ToString());
-                Keyboard.PressAndRelease(System.Windows.Input.Key.Escape);
-
-                Keyboard.Type("functio");
-                System.Threading.Thread.Sleep(2000);
-                Keyboard.Type("\t");
-                openFile.WaitForText(@"var http = require('http');
-
-var port = process.env.port || 1337;
-var mymod = require('./mymod.js');
-var mutatemod = require('./mutatemod.js');
-
-function
-http.createServer(function (req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('Hello World\n');
-}).listen(port);
-");
-            }
-        }
-
 
         [TestMethod, Priority(0), TestCategory("Core"), TestCategory("Ignore")]
         [HostType("VSTestHost")]

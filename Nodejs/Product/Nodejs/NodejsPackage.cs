@@ -21,17 +21,15 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
-using Microsoft.NodejsTools.Analysis;
 using Microsoft.NodejsTools.Commands;
 using Microsoft.NodejsTools.Debugger.DataTips;
 using Microsoft.NodejsTools.Debugger.DebugEngine;
 using Microsoft.NodejsTools.Debugger.Remote;
-using Microsoft.NodejsTools.Intellisense;
 using Microsoft.NodejsTools.Jade;
 using Microsoft.NodejsTools.Logging;
 using Microsoft.NodejsTools.Options;
@@ -41,7 +39,6 @@ using Microsoft.NodejsTools.Repl;
 using Microsoft.NodejsTools.Telemetry;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
-using Microsoft.VisualStudio.Debugger.Interop;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -50,7 +47,6 @@ using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Utilities;
 using Microsoft.VisualStudioTools;
 using Microsoft.VisualStudioTools.Project;
-using Microsoft.Win32;
 
 namespace Microsoft.NodejsTools {
     /// <summary>
@@ -79,41 +75,44 @@ namespace Microsoft.NodejsTools {
     [ProvideProjectFactory(typeof(NodejsProjectFactory), null, null, null, null, ".\\NullPath", LanguageVsTemplate = NodejsConstants.JavaScript, SortPriority=0x17)]   // outer flavor, no file extension
     [ProvideDebugPortSupplier("Node remote debugging", typeof(NodeRemoteDebugPortSupplier), NodeRemoteDebugPortSupplier.PortSupplierId)]
     [ProvideMenuResource(1000, 1)]                              // This attribute is needed to let the shell know that this package exposes some menus.
-    [ProvideBraceCompletion(NodejsConstants.Nodejs)]
-    [ProvideEditorExtension2(typeof(NodejsEditorFactory), NodeJsFileType, 50, "*:1", ProjectGuid = "{78D985FC-2CA0-4D08-9B6B-35ACD5E5294A}", NameResourceID = 102, DefaultName = "server", TemplateDir = ".\\NullPath")]
-    [ProvideEditorExtension2(typeof(NodejsEditorFactoryPromptForEncoding), NodeJsFileType, 50, "*:1", ProjectGuid = "{78D985FC-2CA0-4D08-9B6B-35ACD5E5294A}", NameResourceID = 113, DefaultName = "server")]
-    [ProvideEditorLogicalView(typeof(NodejsEditorFactory), VSConstants.LOGVIEWID.TextView_string)]
-    [ProvideEditorLogicalView(typeof(NodejsEditorFactoryPromptForEncoding), VSConstants.LOGVIEWID.TextView_string)]
     [ProvideProjectItem(typeof(BaseNodeProjectFactory), NodejsConstants.Nodejs, "FileTemplates\\NewItem", 0)]
-    [ProvideLanguageTemplates("{349C5851-65DF-11DA-9384-00065B846F21}", NodejsConstants.JavaScript, Guids.NodejsPackageString, "Web", "Node.js Project Templates", "{" + Guids.NodejsBaseProjectFactoryString + "}", ".js", NodejsConstants.Nodejs, "{" + Guids.NodejsBaseProjectFactoryString + "}")]
     [ProvideTextEditorAutomation(NodejsConstants.Nodejs, 106, 102, ProfileMigrationType.PassThrough)]
     [ProvideLanguageService(typeof(JadeLanguageInfo), JadeContentTypeDefinition.JadeLanguageName, 3041, RequestStockColors = true, ShowSmartIndent = false, ShowCompletion = false, DefaultToInsertSpaces = true, HideAdvancedMembersByDefault = false, EnableAdvancedMembersOption = false, ShowDropDownOptions = false)]
     [ProvideEditorExtension2(typeof(JadeEditorFactory), JadeContentTypeDefinition.JadeFileExtension, 50, __VSPHYSICALVIEWATTRIBUTES.PVA_SupportsPreview, "*:1", ProjectGuid = VSConstants.CLSID.MiscellaneousFilesProject_string, NameResourceID = 3041, EditorNameResourceId = 3045)]
+    [ProvideEditorExtension2(typeof(JadeEditorFactory), JadeContentTypeDefinition.PugFileExtension, 50, __VSPHYSICALVIEWATTRIBUTES.PVA_SupportsPreview, "*:1", ProjectGuid = VSConstants.CLSID.MiscellaneousFilesProject_string, NameResourceID = 3041, EditorNameResourceId = 3045)]
     [ProvideEditorLogicalView(typeof(JadeEditorFactory), VSConstants.LOGVIEWID.TextView_string)]
     [ProvideLanguageExtension(typeof(JadeEditorFactory), JadeContentTypeDefinition.JadeFileExtension)]
+    [ProvideLanguageExtension(typeof(JadeEditorFactory), JadeContentTypeDefinition.PugFileExtension)]
     [ProvideTextEditorAutomation(JadeContentTypeDefinition.JadeLanguageName, 3041, 3045, ProfileMigrationType.PassThrough)]
     [ProvideLanguageEditorOptionPage(typeof(NodejsFormattingSpacingOptionsPage), NodejsConstants.Nodejs, "Formatting", "Spacing", "3042")]
     [ProvideLanguageEditorOptionPage(typeof(NodejsFormattingBracesOptionsPage), NodejsConstants.Nodejs, "Formatting", "Braces", "3043")]
     [ProvideLanguageEditorOptionPage(typeof(NodejsFormattingGeneralOptionsPage), NodejsConstants.Nodejs, "Formatting", "General", "3044")]
+#if DEV14
     [ProvideLanguageEditorOptionPage(typeof(NodejsIntellisenseOptionsPage), NodejsConstants.Nodejs, "IntelliSense", "", "3048")]
-    [ProvideLanguageEditorOptionPage(typeof(NodejsAdvancedEditorOptionsPage), NodejsConstants.Nodejs, "Advanced", "", "3050")]
-    [ProvideCodeExpansions(Guids.NodejsLanguageInfoString, false, 106, "Nodejs", @"Snippets\%LCID%\SnippetsIndex.xml", @"Snippets\%LCID%\Nodejs\")]
-    [ProvideCodeExpansionPath("Nodejs", "Test", @"Snippets\%LCID%\Test\")]
+#endif
     internal sealed partial class NodejsPackage : CommonPackage {
         internal const string NodeExpressionEvaluatorGuid = "{F16F2A71-1C45-4BAB-BECE-09D28CFDE3E6}";
         private IContentType _contentType;
-        internal const string NodeJsFileType = ".njs";
         internal static NodejsPackage Instance;
         private string _surveyNewsUrl;
         private object _surveyNewsUrlLock = new object();
         internal HashSet<ITextBuffer> ChangedBuffers = new HashSet<ITextBuffer>();
         private LanguagePreferences _langPrefs;
-        internal VsProjectAnalyzer _analyzer;
         private NodejsToolsLogger _logger;
         private ITelemetryLogger _telemetryLogger;
         // Hold references for the subscribed events. Otherwise the callbacks will be garbage collected
         // after the initialization
         private List<EnvDTE.CommandEvents> _subscribedCommandEvents = new List<EnvDTE.CommandEvents>();
+
+        private static readonly Version _minRequiredTypescriptVersion = new Version("1.8");
+
+        private readonly Lazy<bool> _hasRequiredTypescriptVersion = new Lazy<bool>(() => {
+            Version version;
+            var versionString = GetTypeScriptToolsVersion();
+            return !string.IsNullOrEmpty(versionString)
+                && Version.TryParse(versionString, out version)
+                && version.CompareTo(_minRequiredTypescriptVersion) > -1;
+        });
 
         /// <summary>
         /// Default constructor of the package.
@@ -140,33 +139,9 @@ namespace Microsoft.NodejsTools {
             }
         }
 
-        public NodejsFormattingSpacingOptionsPage FormattingSpacingOptionsPage {
-            get {
-                return (NodejsFormattingSpacingOptionsPage)GetDialogPage(typeof(NodejsFormattingSpacingOptionsPage));
-            }
-        }
-
-        public NodejsFormattingBracesOptionsPage FormattingBracesOptionsPage {
-            get {
-                return (NodejsFormattingBracesOptionsPage)GetDialogPage(typeof(NodejsFormattingBracesOptionsPage));
-            }
-        }
-
-        public NodejsFormattingGeneralOptionsPage FormattingGeneralOptionsPage {
-            get {
-                return (NodejsFormattingGeneralOptionsPage)GetDialogPage(typeof(NodejsFormattingGeneralOptionsPage));
-            }
-        }
-
         public NodejsIntellisenseOptionsPage IntellisenseOptionsPage {
             get {
                 return (NodejsIntellisenseOptionsPage)GetDialogPage(typeof(NodejsIntellisenseOptionsPage));
-            }
-        }
-
-        public NodejsAdvancedEditorOptionsPage AdvancedEditorOptionsPage {
-            get {
-                return (NodejsAdvancedEditorOptionsPage)GetDialogPage(typeof(NodejsAdvancedEditorOptionsPage));
             }
         }
 
@@ -194,20 +169,26 @@ namespace Microsoft.NodejsTools {
             Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
             base.Initialize();
 
+            if (!_hasRequiredTypescriptVersion.Value) {
+                MessageBox.Show(
+                   Project.SR.GetString(Project.SR.TypeScriptMinVersionNotInstalled, _minRequiredTypescriptVersion.ToString()),
+                   Project.SR.ProductName,
+                   MessageBoxButtons.OK,
+                   MessageBoxIcon.Error);
+            }
+
             SubscribeToVsCommandEvents(
                 (int)VSConstants.VSStd97CmdID.AddNewProject,
                 delegate { NewProjectFromExistingWizard.IsAddNewProjectCmd = true; },
                 delegate { NewProjectFromExistingWizard.IsAddNewProjectCmd = false; }
             );
 
-             var langService = new NodejsLanguageInfo(this);
+            var langService = new NodejsLanguageInfo(this);
             ((IServiceContainer)this).AddService(langService.GetType(), langService, true);
 
             ((IServiceContainer)this).AddService(typeof(ClipboardServiceBase), new ClipboardService(), true);
 
             RegisterProjectFactory(new NodejsProjectFactory(this));
-            RegisterEditorFactory(new NodejsEditorFactory(this));
-            RegisterEditorFactory(new NodejsEditorFactoryPromptForEncoding(this));
             RegisterEditorFactory(new JadeEditorFactory(this));
 
             // Add our command handlers for menu (commands must exist in the .vsct file)
@@ -217,7 +198,9 @@ namespace Microsoft.NodejsTools {
                 new OpenRemoteDebugDocumentationCommand(),
                 new SurveyNewsCommand(),
                 new ImportWizardCommand(),
-                new DiagnosticsCommand(this)
+                new DiagnosticsCommand(this),
+                new SendFeedbackCommand(),
+                new ShowDocumentationCommand()
             };
             try {
                 commands.Add(new AzureExplorerAttachDebuggerCommand());
@@ -225,14 +208,12 @@ namespace Microsoft.NodejsTools {
             }
             RegisterCommands(commands, Guids.NodejsCmdSet);
 
-            IVsTextManager textMgr = (IVsTextManager)Instance.GetService(typeof(SVsTextManager));
+            IVsTextManager4 textMgr = (IVsTextManager4)Instance.GetService(typeof(SVsTextManager));
 
-            var langPrefs = new LANGPREFERENCES[1];
-            langPrefs[0].guidLang = typeof(NodejsLanguageInfo).GUID;
-            ErrorHandler.ThrowOnFailure(textMgr.GetUserPreferences(null, null, langPrefs, null));
+            LANGPREFERENCES3[] langPrefs = GetNodejsLanguagePreferencesFromTypeScript(textMgr);
             _langPrefs = new LanguagePreferences(langPrefs[0]);
 
-            var textManagerEvents2Guid = typeof(IVsTextManagerEvents2).GUID;
+            var textManagerEvents2Guid = typeof(IVsTextManagerEvents4).GUID;
             IConnectionPoint textManagerEvents2ConnectionPoint;
             ((IConnectionPointContainer)textMgr).FindConnectionPoint(ref textManagerEvents2Guid, out textManagerEvents2ConnectionPoint);
             uint cookie;
@@ -245,8 +226,6 @@ namespace Microsoft.NodejsTools {
 
             MakeDebuggerContextAvailable();
 
-            IntellisenseOptionsPage.AnalysisLogMaximumChanged += IntellisenseOptionsPage_AnalysisLogMaximumChanged;
-
             InitializeLogging();
 
             InitializeTelemetry();
@@ -254,6 +233,19 @@ namespace Microsoft.NodejsTools {
             // The variable is inherited by child processes backing Test Explorer, and is used in
             // the NTVS test discoverer and test executor to connect back to VS.
             Environment.SetEnvironmentVariable(NodejsConstants.NodeToolsProcessIdEnvironmentVariable, Process.GetCurrentProcess().Id.ToString());
+        }
+
+        public static LANGPREFERENCES3[] GetNodejsLanguagePreferencesFromTypeScript(IVsTextManager4 textMgr) {
+            var langPrefs = new LANGPREFERENCES3[1];
+            langPrefs[0].guidLang = Guids.TypeScriptLanguageInfo;
+            int hr = textMgr.GetUserPreferences4(null, langPrefs, null);
+            if (ErrorHandler.Failed(hr)) {
+                MessageBox.Show(Project.SR.GetString(Project.SR.CouldNotGetTypeScriptLanguagePreferences), Project.SR.ProductName);
+                ErrorHandler.ThrowOnFailure(hr);
+            }
+            langPrefs[0].guidLang = typeof(NodejsLanguageInfo).GUID;
+            textMgr.SetUserPreferences4(null, langPrefs, null);
+            return langPrefs;
         }
 
         private void SubscribeToVsCommandEvents(
@@ -271,19 +263,11 @@ namespace Microsoft.NodejsTools {
             _subscribedCommandEvents.Add(targetEvent);
         }
 
-
-        private void IntellisenseOptionsPage_AnalysisLogMaximumChanged(object sender, EventArgs e) {
-            if (_analyzer != null) {
-                _analyzer.MaxLogLength = IntellisenseOptionsPage.AnalysisLogMax;
-            }
-        }
-
         private void InitializeLogging() {
             _logger = new NodejsToolsLogger(ComponentModel.GetExtensions<INodejsToolsLogger>().ToArray());
 
             // log interesting stats on startup
             _logger.LogEvent(NodejsToolsLogEvent.SurveyNewsFrequency, GeneralOptionsPage.SurveyNewsCheck);
-            _logger.LogEvent(NodejsToolsLogEvent.AnalysisLevel, IntellisenseOptionsPage.AnalysisLevel);
         }
 
         private void InitializeTelemetry() {
@@ -372,42 +356,6 @@ namespace Microsoft.NodejsTools {
         internal LanguagePreferences LangPrefs {
             get {
                 return _langPrefs;
-            }
-        }
-
-        private static Lazy<string> remoteDebugProxyFolder = new Lazy<string>(() => {
-            const string ROOT_KEY = "Software\\Microsoft\\NodeJSTools\\" + AssemblyVersionInfo.VSVersion;
-
-            // Try HKCU
-            try {
-                using (RegistryKey node = Registry.CurrentUser.OpenSubKey(ROOT_KEY)) {
-                    if (node != null) {
-                        var value = (string)node.GetValue("RemoteDebugProxyFolder");
-                        if (value != null)
-                            return value;
-                    }
-                }
-            } catch (Exception) {
-            }
-
-            // Try HKLM
-            try {
-                using (RegistryKey node = Registry.LocalMachine.OpenSubKey(ROOT_KEY)) {
-                    if (node != null) {
-                        var value = (string)node.GetValue("RemoteDebugProxyFolder");
-                        if (value != null)
-                            return value;
-                    }
-                }
-            } catch (Exception) {
-            }
-
-            return null;
-        });
-
-        public static string RemoteDebugProxyFolder {
-            get {
-                return remoteDebugProxyFolder.Value;
             }
         }
 
@@ -578,40 +526,7 @@ namespace Microsoft.NodejsTools {
         }
 
         internal void CheckSurveyNews(bool forceCheckAndWarnIfNoneAvailable) {
-            bool shouldQueryServer = false;
-            if (forceCheckAndWarnIfNoneAvailable) {
-                shouldQueryServer = true;
-            } else {
-                shouldQueryServer = true;
-                var options = GeneralOptionsPage;
-                // Ensure that we don't prompt the user on their very first project creation.
-                // Delay by 3 days by pretending we checked 4 days ago (the default of check
-                // once a week ensures we'll check again in 3 days).
-                if (options.SurveyNewsLastCheck == DateTime.MinValue) {
-                    options.SurveyNewsLastCheck = DateTime.Now - TimeSpan.FromDays(4);
-                    options.SaveSettingsToStorage();
-                }
-
-                var elapsedTime = DateTime.Now - options.SurveyNewsLastCheck;
-                switch (options.SurveyNewsCheck) {
-                    case SurveyNewsPolicy.Disabled:
-                        break;
-                    case SurveyNewsPolicy.CheckOnceDay:
-                        shouldQueryServer = elapsedTime.TotalDays >= 1;
-                        break;
-                    case SurveyNewsPolicy.CheckOnceWeek:
-                        shouldQueryServer = elapsedTime.TotalDays >= 7;
-                        break;
-                    case SurveyNewsPolicy.CheckOnceMonth:
-                        shouldQueryServer = elapsedTime.TotalDays >= 30;
-                        break;
-                    default:
-                        Debug.Assert(false, String.Format("Unexpected SurveyNewsPolicy: {0}.", options.SurveyNewsCheck));
-                        break;
-                }
-            }
-
-            if (shouldQueryServer) {
+            if (forceCheckAndWarnIfNoneAvailable || ShouldQuerySurveryNewsServer()) {
                 var options = GeneralOptionsPage;
                 options.SurveyNewsLastCheck = DateTime.Now;
                 options.SaveSettingsToStorage();
@@ -619,51 +534,76 @@ namespace Microsoft.NodejsTools {
             }
         }
 
+        private bool ShouldQuerySurveryNewsServer() {
+            var options = GeneralOptionsPage;
+            // Ensure that we don't prompt the user on their very first project creation.
+            // Delay by 3 days by pretending we checked 4 days ago (the default of check
+            // once a week ensures we'll check again in 3 days).
+            if (options.SurveyNewsLastCheck == DateTime.MinValue) {
+                options.SurveyNewsLastCheck = DateTime.Now - TimeSpan.FromDays(4);
+                options.SaveSettingsToStorage();
+            }
+
+            var elapsedTime = DateTime.Now - options.SurveyNewsLastCheck;
+            switch (options.SurveyNewsCheck) {
+                case SurveyNewsPolicy.Disabled:
+                    return false;
+                case SurveyNewsPolicy.CheckOnceDay:
+                    return elapsedTime.TotalDays >= 1;
+                case SurveyNewsPolicy.CheckOnceWeek:
+                    return elapsedTime.TotalDays >= 7;
+                case SurveyNewsPolicy.CheckOnceMonth:
+                    return elapsedTime.TotalDays >= 30;
+                default:
+                    Debug.Assert(false, String.Format("Unexpected SurveyNewsPolicy: {0}.", options.SurveyNewsCheck));
+                    return false;
+            }
+        }
+
         internal static void NavigateTo(string filename, int line, int col) {
-            VsUtilities.NavigateTo(Instance, filename, NodejsProjectNode.IsNodejsFile(filename) ? typeof(NodejsEditorFactory).GUID : Guid.Empty, line, col);
+            VsUtilities.NavigateTo(Instance, filename, Guid.Empty, line, col);
         }
 
         internal static void NavigateTo(string filename, int pos) {
-            VsUtilities.NavigateTo(Instance, filename, NodejsProjectNode.IsNodejsFile(filename) ? typeof(NodejsEditorFactory).GUID : Guid.Empty, pos);
+            VsUtilities.NavigateTo(Instance, filename, Guid.Empty, pos);
         }
 
-        /// <summary>
-        /// The analyzer which is used for loose files.
-        /// </summary>
-        internal VsProjectAnalyzer DefaultAnalyzer {
-            get {
-                if (_analyzer == null) {
-                    _analyzer = new VsProjectAnalyzer(IntellisenseOptionsPage.AnalysisLevel, IntellisenseOptionsPage.SaveToDisk);
-                    LogLooseFileAnalysisLevel();
-                    _analyzer.MaxLogLength = IntellisenseOptionsPage.AnalysisLogMax;
-                    IntellisenseOptionsPage.AnalysisLevelChanged += IntellisenseOptionsPageAnalysisLevelChanged;
-                    IntellisenseOptionsPage.SaveToDiskChanged += IntellisenseOptionsPageSaveToDiskChanged;
+        private static string GetTypeScriptToolsVersion() {
+            var toolsVersion = string.Empty;
+            try {
+                object installDirAsObject = null;
+                var shell = NodejsPackage.Instance.GetService(typeof(SVsShell)) as IVsShell;
+                if (shell != null) {
+                    shell.GetProperty((int)__VSSPROPID.VSSPROPID_InstallDirectory, out installDirAsObject);
                 }
-                return _analyzer;
-            }
-        }
 
-        private void IntellisenseOptionsPageSaveToDiskChanged(object sender, EventArgs e) {
-            _analyzer.SaveToDisk = IntellisenseOptionsPage.SaveToDisk;
-        }
+                var idePath = CommonUtils.NormalizeDirectoryPath((string)installDirAsObject) ?? string.Empty;
+                if (string.IsNullOrEmpty(idePath)) {
+                    return toolsVersion;
+                }
 
-        private void IntellisenseOptionsPageAnalysisLevelChanged(object sender, EventArgs e) {
-            var analyzer = new VsProjectAnalyzer(IntellisenseOptionsPage.AnalysisLevel, IntellisenseOptionsPage.SaveToDisk);
-            analyzer.SwitchAnalyzers(_analyzer);
-            if (_analyzer.RemoveUser()) {
-                _analyzer.Dispose();
-            }
-            _analyzer = analyzer;
-            LogLooseFileAnalysisLevel();
-        }
+                var typeScriptServicesPath = Path.Combine(idePath, @"CommonExtensions\Microsoft\TypeScript\typescriptServices.js");
+                if (!File.Exists(typeScriptServicesPath)) {
+                    return toolsVersion;
+                }
 
-        private void LogLooseFileAnalysisLevel() {
-            var analyzer = _analyzer;
-            if(analyzer != null)
-            {
-                var val = analyzer.AnalysisLevel;
-                _logger.LogEvent(NodejsToolsLogEvent.AnalysisLevel, (int)val);
+                var regex = new Regex(@"toolsVersion = ""(?<version>\d.\d?)"";");
+                var fileText = File.ReadAllText(typeScriptServicesPath);
+                var match = regex.Match(fileText);
+
+                var version = match.Groups["version"].Value;
+                if (!string.IsNullOrWhiteSpace(version)) {
+                    toolsVersion = version;
+                }
+            } catch (Exception ex) {
+                if (ex.IsCriticalException()) {
+                    throw;
+                }
+
+                Debug.WriteLine(string.Format("Failed to obtain TypeScript tools version: {0}", ex.ToString()));
             }
+
+            return toolsVersion;
         }
     }
 }

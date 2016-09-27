@@ -15,15 +15,11 @@
         <File Include="Microsoft.NodejsTools.PressAnyKey.exe" />
         <File Include="Microsoft.NodejsTools.Npm.dll" />
         <File Include="Microsoft.NodejsTools.ProjectWizard.dll" />
-        <File Include="Microsoft.NodejsTools.Analysis.dll" />
         <File Include="Microsoft.NodejsTools.TestAdapter.dll" />
         <File Include="Microsoft.NodejsTools.Telemetry.$(VSTarget).dll" />
 
         <!-- Support Files -->
-        <File Include="all.json" />
         <File Include="Newtonsoft.Json.dll"/>
-        <File Include="Microsoft.ApplicationInsights.dll" Condition="'$(VSTarget)' == '11.0' Or '$(VSTarget)' == '12.0'"/>
-        <File Include="Microsoft.ApplicationInsights.PersistenceChannel.dll" Condition="'$(VSTarget)' == '11.0' Or '$(VSTarget)' == '12.0'"/>
         <File Include="sqlite3.dll" />
         <File Include="visualstudio_nodejs_repl.js"/>
         <File Include="nodejsref.js"/>
@@ -46,10 +42,9 @@
                        FileTemplates\NewItem\EmptyJs.js;
                        FileTemplates\NewItem\EmptyXml.xml;
                        FileTemplates\NewItem\EmptyTs.ts;
-                       FileTemplates\NewItem\EmptyStyl.styl;
                        FileTemplates\NewItem\EmptyLess.less;
                        FileTemplates\NewItem\EmptyJson.json;
-                       FileTemplates\NewItem\EmptyJade.jade;
+                       FileTemplates\NewItem\EmptyPug.pug;
                        FileTemplates\NewItem\EmptyCss.css;
                        FileTemplates\NewItem\EmptyHtml.html">
 
@@ -61,47 +56,25 @@
                                ItemTemplates\JavaScript\MochaUnitTest.zip;
                                ItemTemplates\JavaScript\TypeScriptUnitTest.zip;
                                ItemTemplates\JavaScript\TypeScriptTapeUnitTest.zip;
-                               ItemTemplates\JavaScript\TypeScriptMochaUnitTest.zip;
-                               ItemTemplates\JavaScript\DockerfileTemplate.zip"/>
-                               
-        <File Include="Templates\VS_Nodejs.item.vstman">
-            <InstallDirectory>AllItemTemplates</InstallDirectory>
-        </File>
+                               ItemTemplates\JavaScript\TypeScriptMochaUnitTest.zip;"/>
 
-        <ProjectTemplate Include="ProjectTemplates\JavaScript\Node.js\1033\AzureExpressApp.zip;
-                                  ProjectTemplates\JavaScript\Node.js\1033\AzureExpress4App.zip;
-                                  ProjectTemplates\JavaScript\Node.js\1033\AzureStarterExpressApp.zip;
+        <ProjectTemplate Include="ProjectTemplates\JavaScript\Node.js\1033\AzureExpress4App.zip;
                                   ProjectTemplates\JavaScript\Node.js\1033\AzureNodejsApp.zip;
-                                  ProjectTemplates\JavaScript\Node.js\1033\ExpressApp.zip;
                                   ProjectTemplates\JavaScript\Node.js\1033\Express4App.zip;
-                                  ProjectTemplates\JavaScript\Node.js\1033\StarterExpressApp.zip;
                                   ProjectTemplates\JavaScript\Node.js\1033\FromExistingCode.zip;
                                   ProjectTemplates\JavaScript\Node.js\1033\NodejsWebApp.zip;
                                   ProjectTemplates\JavaScript\Node.js\1033\NodejsConsoleApp.zip;
                                   ProjectTemplates\JavaScript\Node.js\1033\AzureNodejsWorker.zip;
-                                  ProjectTemplates\JavaScript\Node.js\1033\AddWebSiteAzureExpressApp.zip;
-                                  ProjectTemplates\JavaScript\Node.js\1033\AddWebSiteAzureNodejsApp.zip;
-                                  ProjectTemplates\JavaScript\Node.js\1033\AddWebSiteAzureStarterExpressApp.zip;
-                                  ProjectTemplates\JavaScript\Node.js\1033\AddWebSiteExpressApp.zip;
-                                  ProjectTemplates\JavaScript\Node.js\1033\AddWebSiteNodejsWebApp.zip;
-                                  ProjectTemplates\JavaScript\Node.js\1033\AddWebSiteStarterExpressApp.zip;
                                   ProjectTemplates\TypeScript\Node.js\1033\TypeScriptAzureExpressApp.zip;
-                                  ProjectTemplates\JavaScript\Node.js\1033\TypeScriptAzureExpressWebRole.zip;
-                                  ProjectTemplates\TypeScript\Node.js\1033\TypeScriptAzureStarterExpressApp.zip;
                                   ProjectTemplates\TypeScript\Node.js\1033\TypeScriptAzureWebApp.zip;
                                   ProjectTemplates\JavaScript\Node.js\1033\TypeScriptAzureWebRole.zip;
                                   ProjectTemplates\TypeScript\Node.js\1033\TypeScriptConsoleApp.zip;
                                   ProjectTemplates\TypeScript\Node.js\1033\TypeScriptExpressApp.zip;
-                                  ProjectTemplates\TypeScript\Node.js\1033\TypeScriptStarterExpressApp.zip;
                                   ProjectTemplates\TypeScript\Node.js\1033\TypeScriptWebApp.zip;
                                   ProjectTemplates\TypeScript\Node.js\1033\TypeScriptFromExistingCode.zip;
                                   ProjectTemplates\TypeScript\Node.js\1033\TypeScriptAzureNodejsWorker.zip;
                                   ProjectTemplates\JavaScript\Node.js\1033\TypeScriptAzureNodejsWorkerRole.zip;
                                   ProjectTemplates\JavaScript\Node.js\1033\CloudService.zip;"/>
-        
-        <File Include="ProjectTemplates\VS_Nodejs.project.vstman">
-            <InstallDirectory>AllProjectTemplates</InstallDirectory>
-        </File>
 
         <File Include="ItemTemplates\CloudService\NETFramework4\Web Role\Node.js\CloudServiceWebRole.zip;
                        ItemTemplates\CloudService\NETFramework4\Web Role\Node.js\CloudServiceExpressWebRole.zip;
@@ -115,42 +88,13 @@
           <InstallDirectory>ItemTemplates_CloudService_WorkerRole</InstallDirectory>
         </File>
         
-        <!-- Snippets -->
-        <File Include= "Snippets\1033\Nodejs\cl.snippet;
-                        Snippets\1033\Nodejs\dowhile.snippet;
-                        Snippets\1033\Nodejs\else.snippet;
-                        Snippets\1033\Nodejs\express_delete.snippet;
-                        Snippets\1033\Nodejs\express_get.snippet;
-                        Snippets\1033\Nodejs\express_post.snippet;
-                        Snippets\1033\Nodejs\express_put.snippet;
-                        Snippets\1033\Nodejs\for.snippet;
-                        Snippets\1033\Nodejs\forin.snippet;
-                        Snippets\1033\Nodejs\forprops.snippet;
-                        Snippets\1033\Nodejs\forr.snippet;
-                        Snippets\1033\Nodejs\function.snippet;
-                        Snippets\1033\Nodejs\if.snippet;
-                        Snippets\1033\Nodejs\iife.snippet;
-                        Snippets\1033\Nodejs\parse.snippet;
-                        Snippets\1033\Nodejs\readfile.snippet;
-                        Snippets\1033\Nodejs\readstream.snippet;
-                        Snippets\1033\Nodejs\require.snippet;
-                        Snippets\1033\Nodejs\server.snippet;
-                        Snippets\1033\Nodejs\stringify.snippet;
-                        Snippets\1033\Nodejs\switch.snippet;
-                        Snippets\1033\Nodejs\try.snippet;
-                        Snippets\1033\Nodejs\tryf.snippet;
-                        Snippets\1033\Nodejs\while.snippet;
-                        Snippets\1033\Nodejs\with.snippet" >
-            <InstallDirectory>Snippets_1033_Nodejs</InstallDirectory>
+        <File Include="TypingsAcquisitionTool\index.js;
+                       TypingsAcquisitionTool\package.json">
+            <InstallDirectory>TypingsAcquisitionTool</InstallDirectory>
         </File>
-
-        <File Include="Snippets\1033\Test\describe.snippet;
-                       Snippets\1033\Test\it.snippet">
-            <InstallDirectory>Snippets_1033_Test</InstallDirectory>
-        </File>
-       
-        <File Include="Snippets\1033\SnippetsIndex.xml">
-            <InstallDirectory>Snippets_1033</InstallDirectory>
+        
+        <File Include="TypingsAcquisitionTool\bin\install_typings">
+            <InstallDirectory>TypingsAcquisitionToolBin</InstallDirectory>
         </File>
 
         <!--Unit test framework support files-->
@@ -173,8 +117,8 @@
         
         <!-- Remote Debug files -->
         <File Include="License.html;
-                       Debugger\RemoteDebug\RemoteDebug.js;
-                       Debugger\RemoteDebug\Microsoft.NodejsTools.WebRole.dll">
+                       RemoteDebug\RemoteDebug.js;
+                       RemoteDebug\Microsoft.NodejsTools.WebRole.dll">
             <InstallDirectory>RemoteDebug</InstallDirectory>
         </File>
 

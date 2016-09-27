@@ -22,28 +22,6 @@
         <OldToolsVersion>4.0</OldToolsVersion>
       </PropertyGroup>
     </When>
-    <When Condition=" '$(VisualStudioVersion)'=='12.0'  Or '$(TargetVisualStudioVersion)'=='VS120' ">
-      <PropertyGroup>
-        <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
-        <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-        <FileUpgradeFlags>
-        </FileUpgradeFlags>
-        <UpgradeBackupLocation>
-        </UpgradeBackupLocation>
-        <OldToolsVersion>4.0</OldToolsVersion>
-      </PropertyGroup>
-    </When>
-    <When Condition=" '$(VisualStudioVersion)'=='11.0'  Or '$(TargetVisualStudioVersion)'=='VS110' ">
-      <PropertyGroup>
-        <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
-        <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
-        <FileUpgradeFlags>
-        </FileUpgradeFlags>
-        <UpgradeBackupLocation>
-        </UpgradeBackupLocation>
-        <OldToolsVersion>4.0</OldToolsVersion>
-      </PropertyGroup>
-    </When>
   </Choose>
   <Import Project="..\ProjectBefore.settings" />
   <PropertyGroup>
@@ -89,32 +67,50 @@
       <OutputSubPath>Node.js</OutputSubPath>
     </VSTemplate>
   </ItemDefinitionGroup>
-  <Choose>
-    <When Condition="'$(VSTarget)' != '11.0' And '$(VSTarget)' != '12.0'">
-      <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.ImageCatalog, Version=$(VSTarget).0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-        <Reference Include="Microsoft.VisualStudio.Imaging, Version=$(VSTarget).0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-        <!-- 
-        Temporarily freeze versions of some interop assemblies
-        TODO: https://github.com/Microsoft/nodejstools/issues/759
-         -->
-        <Reference Include="Microsoft.VisualStudio.Imaging.Interop.14.0.DesignTime, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-          <EmbedInteropTypes>True</EmbedInteropTypes>
-        </Reference>
-        <Reference Include="Microsoft.VisualStudio.Shell.Interop.14.0.DesignTime, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-          <EmbedInteropTypes>True</EmbedInteropTypes>
-        </Reference>
-        <Reference Include="Microsoft.VisualStudio.Shell.Immutable.$(VSTarget), Version=$(VSTarget).0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-        <Reference Include="Microsoft.VisualStudio.Utilities, Version=$(VSTarget).0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-      </ItemGroup>
-    </When>
-  </Choose>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.ImageCatalog, Version=$(VSTarget).0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.Imaging, Version=$(VSTarget).0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <!-- 
+    Temporarily freeze versions of some interop assemblies
+    TODO: https://github.com/Microsoft/nodejstools/issues/759
+     -->
+    <Reference Include="Microsoft.VisualStudio.Imaging.Interop.14.0.DesignTime, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Shell.Interop.14.0.DesignTime, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Shell.Immutable.$(VSTarget), Version=$(VSTarget).0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.Utilities, Version=$(VSTarget).0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="envdte, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="envdte80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="microsoft.visualstudio.textmanager.interop.11.0, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.TextManager.Interop.12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Validation, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Common\Microsoft.VisualStudio.Validation.14.1.144\Microsoft.VisualStudio.Validation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Workspace, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Common\Microsoft.VisualStudio.Workspaces.14.0.723-pre-g99eb5f2f86\Microsoft.VisualStudio.Workspace.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Workspace.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Common\Microsoft.VisualStudio.Workspaces.14.0.723-pre-g99eb5f2f86\Microsoft.VisualStudio.Workspace.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Workspace.Extensions.VS, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Common\Microsoft.VisualStudio.Workspaces.14.0.723-pre-g99eb5f2f86\Microsoft.VisualStudio.Workspace.Extensions.VS.dll</HintPath>
     </Reference>
     <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -155,12 +151,8 @@
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.8.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.9.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.10.0" />
-    <Reference Include="Microsoft.VisualStudio.Shell.Interop.11.0">
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Shell.Interop.12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" Condition="'$(VSTarget)' != '11.0'">
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Shell.Interop.11.0" />
+    <Reference Include="Microsoft.VisualStudio.Shell.Interop.12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.TemplateWizardInterface, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.Text.Data, Version=$(VSTarget).0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.Text.Logic, Version=$(VSTarget).0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -208,46 +200,17 @@
   <ItemGroup>
     <OutputBinariesToSign Include="Microsoft.NodejsTools.Telemetry.$(VSTarget).dll" />
   </ItemGroup>
-  <Choose>
-    <!-- 
-    VS 2015's devenv.config.exe contains a bindingRedirect for Newtonsoft.Json
-    (versions 0.0.0.0-6.0.0.0 -> 6.0.0.0) so until we upgrade everything to use
-    6.0.0.0 (or get VS to remove the redirect) and deal with all the breaking changes,
-    we should conditionally include the respective Newtonsoft.Json dll version so 
-    that our tests will work with the version shipped with VS 2015.
-    -->
-    <When Condition="'$(VSTarget)' == '12.0' Or '$(VSTarget)' == '11.0'">
-      <ItemGroup>
-        <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-          <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="'$(VSTarget)' == '14.0' or '$(VSTarget)' == '15.0'">
-      <ItemGroup>
-        <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-          <HintPath>..\..\packages\Newtonsoft.Json.6.0.4\lib\net40\Newtonsoft.Json.dll</HintPath>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
   <ItemGroup>
-    <Compile Include="..\ReferenceGenerator\ReferenceCode.cs">
-      <Link>Project\ReferenceCode.cs</Link>
-    </Compile>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.4\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\TypeScript\TypeScriptHelpers.cs">
       <Link>Project\TypeScriptHelpers.cs</Link>
     </Compile>
     <Compile Include="Azure\WebSiteServiceShims.cs" />
     <Compile Include="ClassifierProviderMetadata.cs" />
-    <Compile Include="Classifier\NodejsClassifier.cs" />
-    <Compile Include="Classifier\NodejsClassifierProvider.cs" />
-    <Compile Include="Classifier\NodejsPredefinedClassificationTypeNames.cs" />
-    <Compile Include="Classifier\SnapshotSpanSourceCodeReader.cs" />
-    <Compile Include="Classifier\TokenCache.cs" />
-    <Compile Include="Classifier\TokenCategory.cs" />
-    <Compile Include="Classifier\TokenInfo.cs" />
-    <Compile Include="CodeWindowManager.cs" />
     <Compile Include="Commands\AzureExplorerAttachDebuggerCommand.cs" />
     <Compile Include="Commands\DiagnosticsCommand.cs" />
     <Compile Include="Commands\DiagnosticsForm.cs">
@@ -257,12 +220,15 @@
       <DependentUpon>DiagnosticsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Commands\ImportWizardCommand.cs" />
+    <Compile Include="Commands\SendFeedbackCommand.cs" />
     <Compile Include="Commands\OpenReplWindowCommand.cs" />
     <Compile Include="Commands\OpenRemoteDebugDocumentationCommand.cs" />
     <Compile Include="Commands\OpenRemoteDebugProxyFolderCommand.cs" />
+    <Compile Include="Commands\ShowDocumentationCommand.cs" />
     <Compile Include="Commands\SurveyNewsCommand.cs" />
     <Compile Include="Debugger\DataTips\DataTipTextManagerEvents.cs" />
     <Compile Include="Debugger\DebugEngine\AD7EvalErrorProperty.cs" />
+    <Compile Include="Debugger\NodeDebugProvider.cs" />
     <Compile Include="Logging\LiveLogger.cs" />
     <Compile Include="Debugger\FilePosition.cs" />
     <Compile Include="Debugger\FuzzyLogicFileNameMapper.cs" />
@@ -270,41 +236,6 @@
     <Compile Include="Debugger\LocalFileNameMapper.cs" />
     <Compile Include="Debugger\NodeProcess.cs" />
     <Compile Include="Debugger\ScriptTree.cs" />
-    <Compile Include="Editor\BraceCompletion\BraceKind.cs" />
-    <Compile Include="Editor\BraceCompletion\BraceCompletionContext.cs" />
-    <Compile Include="Editor\BraceCompletion\BraceCompletionContextProvider.cs" />
-    <Compile Include="Editor\BraceMatching\BraceMatchingTaggerProvider.cs" />
-    <Compile Include="Editor\BraceMatching\BraceMatchingTagger.cs" />
-    <Compile Include="Editor\EditorExtensions.cs" />
-    <Compile Include="Intellisense\ExpansionClient.cs" />
-    <Compile Include="Intellisense\AnalysisPriority.cs" />
-    <Compile Include="Intellisense\AnalysisQueue.cs" />
-    <Compile Include="Intellisense\BufferParser.cs" />
-    <Compile Include="Intellisense\CollectingErrorSink.cs" />
-    <Compile Include="Intellisense\CompletionAnalysis.cs" />
-    <Compile Include="Intellisense\CompletionComparer.cs" />
-    <Compile Include="Intellisense\EntryEventArgs.cs" />
-    <Compile Include="Intellisense\ExpressionAnalysis.cs" />
-    <Compile Include="Intellisense\FileEventArgs.cs" />
-    <Compile Include="Intellisense\FuzzyCompletionSet.cs" />
-    <Compile Include="Intellisense\FuzzyStringMatcher.cs" />
-    <Compile Include="Intellisense\IContentTypeMetadata.cs" />
-    <Compile Include="Intellisense\IntellisenseController.cs" />
-    <Compile Include="Intellisense\IntellisenseControllerProvider.cs" />
-    <Compile Include="Intellisense\NodejsParameter.cs" />
-    <Compile Include="Intellisense\NodejsSignature.cs" />
-    <Compile Include="Intellisense\NormalCompletionAnalysis.cs" />
-    <Compile Include="Intellisense\ParseQueue.cs" />
-    <Compile Include="Intellisense\QuickInfoSource.cs" />
-    <Compile Include="Intellisense\QuickInfoSourceProvider.cs" />
-    <Compile Include="Intellisense\RequireCompletionAnalysis.cs" />
-    <Compile Include="Intellisense\ReverseExpressionParser.cs" />
-    <Compile Include="Intellisense\SignatureAnalysis.cs" />
-    <Compile Include="Intellisense\SignatureHelpSource.cs" />
-    <Compile Include="Intellisense\SignatureHelpSourceProvider.cs" />
-    <Compile Include="Intellisense\VsProjectAnalyzer.cs" />
-    <Compile Include="Intellisense\SnapshotCookie.cs" />
-    <Compile Include="Intellisense\TaskProvider.cs" />
     <Compile Include="Logging\InMemoryLogger.cs" />
     <Compile Include="Logging\INodejsToolsLogger.cs" />
     <Compile Include="Logging\NodejsToolsLogEvent.cs" />
@@ -320,7 +251,11 @@
       <DependentUpon>NpmPackageInstallWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="NpmUI\PackageCatalogEntryViewModel.cs" />
-    <Compile Include="Options\AnalysisLevel.cs" />
+    <Compile Include="Options\NodejsFormattingDialogPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Options\TypeScriptRegistrySwitches.cs" />
+    <Compile Include="Options\TypingsInfoBar.cs" />
     <Compile Include="Options\NodejsDiagnosticsOptionsPage.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -333,15 +268,6 @@
     <Compile Include="Options\NodejsNpmOptionsControl.Designer.cs">
       <DependentUpon>NodejsNpmOptionsControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Options\NodejsAdvancedEditorOptionsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Options\NodejsAdvancedEditorOptionsControl.Designer.cs">
-      <DependentUpon>NodejsAdvancedEditorOptionsControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Options\NodejsAdvancedEditorOptionsPage.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Options\NodejsIntellisenseOptionsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -351,8 +277,20 @@
     <Compile Include="Options\NodejsIntellisenseOptionsPage.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Outlining\JavaScriptOutliningTaggerProvider.cs" />
+    <Compile Include="Options\SalsaLsIntellisenseOptionsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\SalsaLsIntellisenseOptionsControl.Designer.cs">
+      <DependentUpon>SalsaLsIntellisenseOptionsControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Project\AzureToolsContracts.cs" />
+    <Compile Include="Project\NewFileMenuGroup\NewFileUtilities.cs" />
+    <Compile Include="Project\NewFileMenuGroup\NewFileNameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Project\NewFileMenuGroup\NewFileNameForm.Designer.cs">
+      <DependentUpon>NewFileNameForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Project\DependencyNodeProperties.cs" />
     <Compile Include="Project\LocalModulesNode.cs" />
     <Compile Include="Project\NodejsFolderNode.cs" />
@@ -407,7 +345,6 @@
     <Compile Include="Options\NodejsFormattingSpacingOptionsControl.Designer.cs">
       <DependentUpon>NodejsFormattingSpacingOptionsControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Project\PackageJsonFileNode.cs" />
     <Compile Include="Project\ProjectResources.cs" />
     <Compile Include="Repl\NpmReplCommand.cs" />
     <Compile Include="TaggerProviderMetadata.cs" />
@@ -450,12 +387,6 @@
     <Compile Include="Debugger\Serialization\NodePropertyType.cs" />
     <Compile Include="Debugger\Serialization\NodePrototypeVariable.cs" />
     <Compile Include="Debugger\Serialization\NodeVariableType.cs" />
-    <Compile Include="EditFilter.cs" />
-    <Compile Include="Intellisense\CompletionInfo.cs" />
-    <Compile Include="Intellisense\CompletionSource.cs" />
-    <Compile Include="Intellisense\CompletionSourceProvider.cs" />
-    <Compile Include="Intellisense\RequireCompletionCache.cs" />
-    <Compile Include="Intellisense\TextViewCreationListener.cs" />
     <Compile Include="Jade\Classifier\IClassificationContextNameProvider.cs" />
     <Compile Include="Jade\Classifier\ICompositeToken.cs" />
     <Compile Include="Jade\Classifier\JadeClassificationDefinitions.cs" />
@@ -533,7 +464,6 @@
     </Compile>
     <Compile Include="Options\SurveyNewsPolicy.cs" />
     <Compile Include="Project\AbstractNpmNode.cs" />
-    <Compile Include="Project\GlobalModulesNode.cs" />
     <Compile Include="Project\ImportWizard\StartupPage.xaml.cs">
       <DependentUpon>StartupPage.xaml</DependentUpon>
     </Compile>
@@ -585,9 +515,7 @@
     <Compile Include="Project\NodejsGeneralPropertyPageControl.Designer.cs">
       <DependentUpon>NodejsGeneralPropertyPageControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="ProvideBraceCompletion.cs" />
     <Compile Include="ProvideEditorExtension2Attribute.cs" />
-    <Compile Include="ProvideLanguageTemplates.cs" />
     <Compile Include="Repl\ClearReplCommand.cs" />
     <Compile Include="Repl\INodejsReplSite.cs" />
     <Compile Include="Repl\SaveReplCommand.cs" />
@@ -598,7 +526,6 @@
     <Compile Include="TestFrameworks\TestFrameworkDirectories.cs" />
     <Compile Include="TypingsAcquisition.cs" />
     <Compile Include="VsMenus.cs" />
-    <Compile Include="AzureSolutionListener.cs" />
     <Compile Include="BaseNodeProjectFactory.cs" />
     <Compile Include="Debugger\BreakpointBindingEventArgs.cs" />
     <Compile Include="Debugger\BreakpointHitEventArgs.cs" />
@@ -646,9 +573,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="JsonListener.cs" />
-    <Compile Include="Navigation\CodeWindowManager.cs" />
     <Compile Include="NodejsConstants.cs" />
-    <Compile Include="NodejsEditorFactory.cs" />
     <Compile Include="NodejsProject.cs" />
     <Compile Include="NodejsProjectFactory.cs" />
     <Compile Include="PkgCmdId.cs" />
@@ -665,6 +590,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="NodejsPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Telemetry\NodejsTelemetryExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <TelemetryFiles Include="..\..\Common\Telemetry\*.cs" />
@@ -679,9 +605,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Options\NodejsNpmOptionsControl.resx">
       <DependentUpon>NodejsNpmOptionsControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Options\NodejsAdvancedEditorOptionsControl.resx">
-      <DependentUpon>NodejsAdvancedEditorOptionsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Options\NodejsIntellisenseOptionsControl.resx">
       <DependentUpon>NodejsIntellisenseOptionsControl.cs</DependentUpon>
@@ -699,6 +622,10 @@
     <EmbeddedResource Include="Options\NodejsGeneralOptionsControl.resx">
       <DependentUpon>NodejsGeneralOptionsControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Project\NewFileNameForm.resx" />
+    <EmbeddedResource Include="Options\SalsaLsIntellisenseOptionsControl.resx">
+      <DependentUpon>SalsaLsIntellisenseOptionsControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Project\NodejsGeneralPropertyPageControl.resx">
       <DependentUpon>NodejsGeneralPropertyPageControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -709,23 +636,22 @@
     </ConditionalEmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TypingsAcquisitionTool\index.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="TypingsAcquisitionTool\package.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="TypingsAcquisitionTool\bin\install_typings">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <ZipProject Include="ProjectTemplates\CloudService\CloudService.ccproj" />
     <ZipProject Include="ProjectTemplates\CloudService\ServiceConfiguration.Cloud.cscfg" />
     <ZipProject Include="ProjectTemplates\CloudService\ServiceConfiguration.Local.cscfg" />
     <ZipProject Include="ProjectTemplates\CloudService\ServiceDefinition.csdef" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\ChangeConfig.ps1" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\download.ps1" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\iisnode.yml" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\index.jade" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\layout.jade" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\node.cmd" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\package.json" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\README.md" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\setup_web.cmd" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\style.styl" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\TypeScriptExpressApp.njsproj" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\Web.config" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\Web.Debug.config" />
     <ZipProject Include="ProjectTemplates\TypeScriptAzureNodejsWorkerRole\download.ps1" />
     <ZipProject Include="ProjectTemplates\TypeScriptAzureNodejsWorkerRole\node.cmd" />
     <ZipProject Include="ProjectTemplates\TypeScriptAzureNodejsWorkerRole\package.json" />
@@ -742,18 +668,18 @@
     <ZipProject Include="ProjectTemplates\TypeScriptAzureWebRole\TypeScriptWebApp.njsproj" />
     <ZipProject Include="ProjectTemplates\TypeScriptAzureWebRole\Web.config" />
     <ZipProject Include="ProjectTemplates\TypeScriptAzureWebRole\Web.Debug.config" />
-    <ZipProject Include="ProjectTemplates\Express4App\index.jade" />
-    <ZipProject Include="ProjectTemplates\Express4App\layout.jade" />
+    <ZipProject Include="ProjectTemplates\Express4App\index.pug" />
+    <ZipProject Include="ProjectTemplates\Express4App\layout.pug" />
     <ZipProject Include="ProjectTemplates\Express4App\package.json" />
     <ZipProject Include="ProjectTemplates\Express4App\README.md" />
-    <ZipProject Include="ProjectTemplates\Express4App\style.styl" />
-    <ZipProject Include="ProjectTemplates\Express4App\error.jade" />
-    <ZipProject Include="ProjectTemplates\AzureExpress4App\error.jade" />
-    <ZipProject Include="ProjectTemplates\AzureExpress4App\index.jade" />
-    <ZipProject Include="ProjectTemplates\AzureExpress4App\layout.jade" />
+    <ZipProject Include="ProjectTemplates\Express4App\main.css" />
+    <ZipProject Include="ProjectTemplates\Express4App\error.pug" />
+    <ZipProject Include="ProjectTemplates\AzureExpress4App\error.pug" />
+    <ZipProject Include="ProjectTemplates\AzureExpress4App\index.pug" />
+    <ZipProject Include="ProjectTemplates\AzureExpress4App\layout.pug" />
     <ZipProject Include="ProjectTemplates\AzureExpress4App\package.json" />
     <ZipProject Include="ProjectTemplates\AzureExpress4App\README.md" />
-    <ZipProject Include="ProjectTemplates\AzureExpress4App\style.styl" />
+    <ZipProject Include="ProjectTemplates\AzureExpress4App\main.css" />
     <ZipProject Include="ProjectTemplates\AzureExpress4App\www" />
     <ZipProject Include="ProjectTemplates\AzureExpress4App\ChangeConfig.ps1" />
     <ZipProject Include="ProjectTemplates\AzureExpress4App\download.ps1" />
@@ -762,128 +688,23 @@
     <ZipProject Include="ProjectTemplates\AzureExpress4App\setup_web.cmd" />
     <ZipProject Include="ProjectTemplates\AzureExpress4App\Web.config" />
     <ZipProject Include="ProjectTemplates\AzureExpress4App\Web.Debug.config" />
-    <Content Include="Snippets\1033\Test\describe.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Snippets\1033\Test\it.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\cl.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\dowhile.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\else.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\express_delete.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\express_get.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\express_post.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\express_put.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\for.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\forin.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\forr.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\function.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\if.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\iife.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\parse.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\forprops.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\readfile.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\readstream.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\require.snippet">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\server.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\stringify.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\switch.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\try.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\tryf.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\while.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Snippets\1033\Nodejs\with.snippet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="ProjectTemplates\VS_Nodejs.project.vstman">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <ZipItem Include="Templates\Files\TapeUnitTest\UnitTest.js" />
     <ZipItem Include="Templates\Files\TapeUnitTest\UnitTest.vstemplate" />
     <ZipItem Include="Templates\Files\TypeScriptTapeUnitTest\UnitTest.vstemplate" />
     <ZipItem Include="Templates\Files\TypeScriptTapeUnitTest\UnitTest.ts" />
-    <Content Include="Templates\VS_Nodejs.item.vstman">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <VSIXSubPath>ItemTemplates</VSIXSubPath>
-    </Content>
+    <None Include="app.config" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\express-serve-static-core.typings.json" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\express.typings.json" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\serve-static.typings.json" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\typings.json" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\mine.typings.json" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\www" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\express-serve-static-core.typings.json" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\express.typings.json" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\serve-static.typings.json" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\mine.typings.json" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\www" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\typings.json" />
     <None Include="Theme\contrast.vstheme">
       <SubType>Designer</SubType>
     </None>
@@ -891,29 +712,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Theme\make_theme_pkgdef.py" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteExpressApp\AddWebSiteExpressApp.njsproj">
-      <SubType>Designer</SubType>
-    </ZipProject>
-    <TransformedZipProject Include="ProjectTemplates\AddWebSiteExpressApp\AddWebSiteExpressApp.vstemplate.base">
-      <SubType>Designer</SubType>
-    </TransformedZipProject>
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\AzureExpressApp.njsproj">
-      <SubType>Designer</SubType>
-    </ZipProject>
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\AzureExpressApp.vstemplate">
-      <SubType>Designer</SubType>
-    </ZipProject>
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\AddWebSiteAzureExpressApp.njsproj">
-      <SubType>Designer</SubType>
-    </ZipProject>
-    <TransformedZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\AddWebSiteAzureExpressApp.vstemplate.base">
-      <SubType>Designer</SubType>
-    </TransformedZipProject>
     <ZipProject Include="ProjectTemplates\NodejsWebApp\Preview.png" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureNodejsApp\Preview.png" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteNodejsWebApp\Preview.png" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\Preview.png" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\Preview.png" />
     <ZipProject Include="ProjectTemplates\AzureNodejsApp\Preview.png" />
     <ZipProject Include="ProjectTemplates\NodejsConsoleApp\Preview.png" />
     <Content Include="..\..\Common\Telemetry\Microsoft.NodejsTools.Telemetry.$(VSTarget).dll">
@@ -921,14 +720,12 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <VSIXSubPath>.</VSIXSubPath>
     </Content>
-    <Content Include="..\..\packages\Microsoft.ApplicationInsights.1.2.0\lib\net45\Microsoft.ApplicationInsights.dll" Condition="'$(VSTarget)' == '11.0' Or '$(VSTarget)' == '12.0'">
-      <Link>Microsoft.ApplicationInsights.dll</Link>
+    <Content Include="$(OutputPath)\Newtonsoft.Json.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
       <VSIXSubPath>.</VSIXSubPath>
     </Content>
-    <Content Include="..\..\packages\Microsoft.ApplicationInsights.PersistenceChannel.1.2.0\lib\net45\Microsoft.ApplicationInsights.PersistenceChannel.dll" Condition="'$(VSTarget)' == '11.0' Or '$(VSTarget)' == '12.0'">
-      <Link>Microsoft.ApplicationInsights.PersistenceChannel.dll</Link>
+    <Content Include="$(OutputPath)\Microsoft.VisualStudio.Shell.Interop.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
       <VSIXSubPath>.</VSIXSubPath>
@@ -938,12 +735,10 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Debugger\RemoteDebug\RemoteDebug.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Snippets\1033\SnippetsIndex.xml">
-      <SubType>Designer</SubType>
+      <Link>RemoteDebug\RemoteDebug.js</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
+      <VSIXSubPath>RemoteDebug</VSIXSubPath>
     </Content>
     <Content Include="FileTemplates\NewItem\EmptyTs.ts">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -959,16 +754,7 @@
     <ZipProject Include="ProjectTemplates\FromExistingCode\FromExistingCode.vstemplate">
       <SubType>Designer</SubType>
     </ZipProject>
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\app.js" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\index.js" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\user.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteExpressApp\app.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteExpressApp\index.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteExpressApp\user.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\app.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\index.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\user.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureNodejsApp\server.js" />
+    <ZipProject Include="ProjectTemplates\AzureExpress4App\typings.json" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptConsoleApp\package.json" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptConsoleApp\README.md" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptConsoleApp\app.ts" />
@@ -1004,176 +790,8 @@
       <Link>Resources\Icons\TSProject_SolutionExplorerNode.png</Link>
       <LogicalName>Microsoft.VisualStudioTools.Resources.Icons.TSProject_SolutionExplorerNode.png</LogicalName>
     </EmbeddedResource>
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\_references.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\about.jade" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\contact.jade" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\glyphicons-halflings-regular.eot" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\glyphicons-halflings-regular.ttf" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\glyphicons-halflings-regular.woff" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\index.jade" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\jquery-1.10.2.min.map" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\layout.jade" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\package.json" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\README.md" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\style.styl" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\app.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\bootstrap.css" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\bootstrap.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\bootstrap.min.css" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\bootstrap.min.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\glyphicons-halflings-regular.svg" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\index.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\jquery-1.10.2.intellisense.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\jquery-1.10.2.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\jquery-1.10.2.min.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\jquery.validate-vsdoc.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\jquery.validate.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\jquery.validate.min.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\jquery.validate.unobtrusive.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\jquery.validate.unobtrusive.min.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\modernizr-2.6.2.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\Preview.png" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\respond.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\respond.min.js" />
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\StarterExpressApp.njsproj">
-      <SubType>Designer</SubType>
-    </ZipProject>
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\StarterExpressApp.vstemplate">
-      <SubType>Designer</SubType>
-    </ZipProject>
-    <ZipProject Include="ProjectTemplates\StarterExpressApp\user.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\_references.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\app.ts" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\bootstrap.css" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\bootstrap.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\bootstrap.min.css" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\bootstrap.min.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\glyphicons-halflings-regular.svg" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\index.ts" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\jquery-1.10.2.intellisense.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\jquery-1.10.2.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\jquery-1.10.2.min.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\jquery.validate-vsdoc.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\jquery.validate.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\jquery.validate.min.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\jquery.validate.unobtrusive.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\jquery.validate.unobtrusive.min.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\modernizr-2.6.2.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\Preview.png" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\respond.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\respond.min.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\TypeScriptStarterExpressApp.njsproj">
-      <SubType>Designer</SubType>
-    </TypeScriptProject>
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\TypeScriptStarterExpressApp.vstemplate">
-      <SubType>Designer</SubType>
-    </TypeScriptProject>
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\user.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\_references.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\app.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\bootstrap.css" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\bootstrap.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\bootstrap.min.css" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\bootstrap.min.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\glyphicons-halflings-regular.svg" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\index.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\jquery-1.10.2.intellisense.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\jquery-1.10.2.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\jquery-1.10.2.min.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\jquery.validate-vsdoc.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\jquery.validate.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\jquery.validate.min.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\jquery.validate.unobtrusive.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\jquery.validate.unobtrusive.min.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\modernizr-2.6.2.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\Preview.png" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\respond.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\respond.min.js" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\AzureStarterExpressApp.njsproj">
-      <SubType>Designer</SubType>
-    </ZipProject>
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\AzureStarterExpressApp.vstemplate">
-      <SubType>Designer</SubType>
-    </ZipProject>
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\user.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\_references.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\bootstrap.css" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\bootstrap.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\bootstrap.min.css" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\bootstrap.min.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\glyphicons-halflings-regular.svg" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\jquery-1.10.2.intellisense.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\jquery-1.10.2.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\jquery-1.10.2.min.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\jquery.validate-vsdoc.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\jquery.validate.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\jquery.validate.min.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\jquery.validate.unobtrusive.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\jquery.validate.unobtrusive.min.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\modernizr-2.6.2.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\Preview.png" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\respond.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\respond.min.js" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\TypeScriptAzureStarterExpressApp.njsproj">
-      <SubType>Designer</SubType>
-    </TypeScriptProject>
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\TypeScriptAzureStarterExpressApp.vstemplate">
-      <SubType>Designer</SubType>
-    </TypeScriptProject>
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\user.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\AddWebSiteAzureStarterExpressApp.njsproj">
-      <SubType>Designer</SubType>
-    </ZipProject>
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\_references.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\app.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\bootstrap.css" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\bootstrap.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\bootstrap.min.css" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\bootstrap.min.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\glyphicons-halflings-regular.svg" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\index.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\jquery-1.10.2.intellisense.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\jquery-1.10.2.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\jquery-1.10.2.min.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\jquery.validate-vsdoc.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\jquery.validate.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\jquery.validate.min.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\jquery.validate.unobtrusive.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\jquery.validate.unobtrusive.min.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\modernizr-2.6.2.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\Preview.png" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\respond.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\respond.min.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\user.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\_references.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\AddWebSiteStarterExpressApp.njsproj">
-      <SubType>Designer</SubType>
-    </ZipProject>
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\app.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\bootstrap.css" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\bootstrap.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\bootstrap.min.css" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\bootstrap.min.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\glyphicons-halflings-regular.svg" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\index.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\jquery-1.10.2.intellisense.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\jquery-1.10.2.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\jquery-1.10.2.min.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\jquery.validate-vsdoc.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\jquery.validate.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\jquery.validate.min.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\jquery.validate.unobtrusive.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\jquery.validate.unobtrusive.min.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\modernizr-2.6.2.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\Preview.png" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\respond.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\respond.min.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\user.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteExpressApp\Preview.png" />
     <ZipProject Include="ProjectTemplates\CloudService\cloudservice.ico" />
     <ZipProject Include="ProjectTemplates\CloudService\CloudService.vstemplate" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\Preview.png" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\TypeScriptExpressApp.vstemplate" />
     <ZipProject Include="ProjectTemplates\TypeScriptAzureNodejsWorkerRole\Preview.png" />
     <ZipProject Include="ProjectTemplates\TypeScriptAzureNodejsWorkerRole\Worker.vstemplate" />
     <ZipProject Include="ProjectTemplates\TypeScriptAzureWebRole\Preview.png" />
@@ -1187,6 +805,7 @@
     <ZipProject Include="ProjectTemplates\Express4App\ExpressApp.vstemplate">
       <SubType>Designer</SubType>
     </ZipProject>
+    <ZipProject Include="ProjectTemplates\Express4App\typings.json" />
     <ZipProject Include="ProjectTemplates\Express4App\index.js" />
     <ZipProject Include="ProjectTemplates\Express4App\Preview.png" />
     <ZipProject Include="ProjectTemplates\Express4App\users.js" />
@@ -1227,40 +846,6 @@
     <TypeScriptProject Include="ProjectTemplates\TypeScriptFromExistingCode\FromExistingCode.vstemplate">
       <SubType>Designer</SubType>
     </TypeScriptProject>
-    <TransformedZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\AddWebSiteAzureStarterExpressApp.vstemplate.base">
-      <SubType>Designer</SubType>
-    </TransformedZipProject>
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\about.jade" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\ChangeConfig.ps1" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\contact.jade" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\download.ps1" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\glyphicons-halflings-regular.eot" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\glyphicons-halflings-regular.ttf" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\glyphicons-halflings-regular.woff" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\index.jade" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\jquery-1.10.2.min.map" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\layout.jade" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\node.cmd" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\package.json" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\README.md" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\setup_web.cmd" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\style.styl" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\Web.config" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureStarterExpressApp\Web.Debug.config" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\about.jade" />
-    <TransformedZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\AddWebSiteStarterExpressApp.vstemplate.base">
-      <SubType>Designer</SubType>
-    </TransformedZipProject>
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\contact.jade" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\glyphicons-halflings-regular.eot" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\glyphicons-halflings-regular.ttf" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\glyphicons-halflings-regular.woff" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\index.jade" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\jquery-1.10.2.min.map" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\layout.jade" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\package.json" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\README.md" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteStarterExpressApp\style.styl" />
     <ZipProject Include="ProjectTemplates\AzureNodejsWorker\Worker.njsproj">
       <SubType>Designer</SubType>
     </ZipProject>
@@ -1307,19 +892,13 @@
     <ZipItem Include="Templates\Files\TypeScriptUnitTest\UnitTest.vstemplate">
       <SubType>Designer</SubType>
     </ZipItem>
-    <ZipItem Include="Templates\Files\DockerfileTemplate\Dockerfile" />
-    <ZipItem Include="Templates\Files\DockerfileTemplate\Dockerfile.vstemplate">
-      <SubType>Designer</SubType>
-    </ZipItem>
-    <None Include="Theme\Microsoft.NodejsTools.theme.v11.0.pkgdef" />
-    <None Include="Theme\Microsoft.NodejsTools.theme.v12.0.pkgdef" />
     <None Include="Theme\Microsoft.NodejsTools.theme.v14.0.pkgdef" />
     <None Include="Theme\Microsoft.NodejsTools.theme.v15.0.pkgdef" />
     <Content Include="TestFrameworks\Tape\tape.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="VSTemplateStore.pkgdef">
-      <IncludeInVSIX>true</IncludeInVSIX>
+      <IncludeInVSIX>false</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <VSCTCompile Include="NodejsTools.vsct">
@@ -1337,35 +916,7 @@
     <ZipProject Include="ProjectTemplates\AzureNodejsApp\AzureNodejsApp.vstemplate">
       <SubType>Designer</SubType>
     </ZipProject>
-    <ZipProject Include="ProjectTemplates\ExpressApp\ExpressApp.njsproj">
-      <SubType>Designer</SubType>
-    </ZipProject>
     <ZipProject Include="ProjectTemplates\AzureNodejsApp\server.js" />
-    <ZipProject Include="ProjectTemplates\ExpressApp\ExpressApp.vstemplate">
-      <SubType>Designer</SubType>
-    </ZipProject>
-    <TransformedZipProject Include="ProjectTemplates\AddWebSiteAzureNodejsApp\AddWebSiteAzureNodejsApp.vstemplate.base">
-      <SubType>Designer</SubType>
-    </TransformedZipProject>
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureNodejsApp\AddWebSiteAzureNodejsApp.njsproj">
-      <SubType>Designer</SubType>
-    </ZipProject>
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureNodejsApp\ChangeConfig.ps1" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureNodejsApp\download.ps1" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureNodejsApp\package.json" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureNodejsApp\README.md" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureNodejsApp\setup_web.cmd" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureNodejsApp\Web.config" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureNodejsApp\Web.Debug.config" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureNodejsApp\node.cmd" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureNodejsApp\iisnode.yml" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteNodejsWebApp\AddWebSiteNodejsWebApp.njsproj">
-      <SubType>Designer</SubType>
-    </ZipProject>
-    <TransformedZipProject Include="ProjectTemplates\AddWebSiteNodejsWebApp\AddWebSiteNodejsWebApp.vstemplate.base">
-      <SubType>Designer</SubType>
-    </TransformedZipProject>
-    <ZipProject Include="ProjectTemplates\AddWebSiteNodejsWebApp\server.js" />
     <Content Include="Microsoft.NodejsTools.targets">
       <IncludeInVSIX>true</IncludeInVSIX>
       <TargetPath>Microsoft.NodejsTools.Developer.targets</TargetPath>
@@ -1390,75 +941,30 @@
     <ZipProject Include="ProjectTemplates\AzureNodejsApp\Web.config" />
     <ZipProject Include="ProjectTemplates\AzureNodejsApp\node.cmd" />
     <ZipProject Include="ProjectTemplates\AzureNodejsApp\iisnode.yml" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteNodejsWebApp\package.json" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteNodejsWebApp\README.md" />
     <ZipProject Include="ProjectTemplates\NodejsWebApp\NodejsWebApp.njsproj">
       <SubType>Designer</SubType>
     </ZipProject>
     <ZipProject Include="ProjectTemplates\NodejsWebApp\package.json" />
     <ZipProject Include="ProjectTemplates\NodejsWebApp\README.md" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteNodejsWebApp\WebApplication.webproj" />
-    <ZipProject Include="ProjectTemplates\ExpressApp\package.json" />
-    <ZipProject Include="ProjectTemplates\ExpressApp\README.md" />
-    <ZipProject Include="ProjectTemplates\ExpressApp\style.styl" />
-    <ZipProject Include="ProjectTemplates\ExpressApp\index.jade" />
-    <ZipProject Include="ProjectTemplates\ExpressApp\layout.jade" />
-    <ZipProject Include="ProjectTemplates\ExpressApp\Preview.png" />
-    <ZipProject Include="ProjectTemplates\ExpressApp\app.js" />
-    <ZipProject Include="ProjectTemplates\ExpressApp\index.js" />
-    <ZipProject Include="ProjectTemplates\ExpressApp\user.js" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteExpressApp\package.json" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteExpressApp\README.md" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\package.json" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\README.md" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\Web.config" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\Web.Debug.config" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\setup_web.cmd" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\download.ps1" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\ChangeConfig.ps1" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\node.cmd" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\iisnode.yml" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\ChangeConfig.ps1" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\download.ps1" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\package.json" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\README.md" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\setup_web.cmd" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\Web.Debug.config" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\Web.config" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\node.cmd" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\iisnode.yml" />
     <ZipProject Include="ProjectTemplates\NodejsConsoleApp\package.json" />
     <ZipProject Include="ProjectTemplates\NodejsConsoleApp\README.md" />
     <ZipProject Include="ProjectTemplates\NodejsConsoleApp\app.js" />
     <ZipProject Include="ProjectTemplates\NodejsConsoleApp\NodejsConsoleApp.njsproj" />
     <ZipProject Include="ProjectTemplates\NodejsConsoleApp\NodejsConsoleApp.vstemplate" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\index.jade" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\layout.jade" />
-    <ZipProject Include="ProjectTemplates\AzureExpressApp\style.styl" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteExpressApp\index.jade" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteExpressApp\layout.jade" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteExpressApp\style.styl" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\index.jade" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\layout.jade" />
-    <ZipProject Include="ProjectTemplates\AddWebSiteAzureExpressApp\style.styl" />
     <None Include="packages.config" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\ExpressApp.njsproj">
       <SubType>Designer</SubType>
     </TypeScriptProject>
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\index.jade" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\layout.jade" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\index.pug" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\layout.pug" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\package.json" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\README.md" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\style.styl" />
-    <Content Include="FileTemplates\NewItem\EmptyJade.jade">
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\main.css" />
+    <Content Include="FileTemplates\NewItem\EmptyPug.pug">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="FileTemplates\NewItem\EmptyJson.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="FileTemplates\NewItem\EmptyStyl.styl">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1489,11 +995,11 @@
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\TypeScriptExpressApp.njsproj">
       <SubType>Designer</SubType>
     </TypeScriptProject>
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\index.jade" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\layout.jade" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\index.pug" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\layout.pug" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\package.json" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\README.md" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\style.styl" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\main.css" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\ChangeConfig.ps1" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\download.ps1" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\node.cmd" />
@@ -1510,56 +1016,11 @@
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureNodejsWorker\Worker.vstemplate">
       <SubType>Designer</SubType>
     </TypeScriptProject>
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\about.jade" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\contact.jade" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\glyphicons-halflings-regular.eot" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\glyphicons-halflings-regular.ttf" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\glyphicons-halflings-regular.woff" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\index.jade" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\jquery-1.10.2.min.map" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\layout.jade" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\package.json" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\README.md" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\style.styl" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\about.jade" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\contact.jade" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\glyphicons-halflings-regular.eot" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\glyphicons-halflings-regular.ttf" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\glyphicons-halflings-regular.woff" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\index.jade" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\jquery-1.10.2.min.map" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\layout.jade" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\package.json" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\README.md" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\style.styl" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\Web.config" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\Web.Debug.config" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\setup_web.cmd" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\node.cmd" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\download.ps1" />
-    <ZipProject Include="ProjectTemplates\AzureStarterExpressApp\ChangeConfig.ps1" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureNodejsWorker\download.ps1" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureNodejsWorker\node.cmd" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureNodejsWorker\package.json" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureNodejsWorker\README.md" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureNodejsWorker\setup_worker.cmd" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\about.jade" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\contact.jade" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\glyphicons-halflings-regular.eot" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\glyphicons-halflings-regular.ttf" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\glyphicons-halflings-regular.woff" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\index.jade" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\jquery-1.10.2.min.map" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\layout.jade" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\package.json" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\README.md" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\style.styl" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\ChangeConfig.ps1" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\download.ps1" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\node.cmd" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\setup_web.cmd" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\Web.config" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\Web.Debug.config" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -1649,11 +1110,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Analysis\Analysis.csproj">
-      <Project>{dfdb930e-1162-4514-a91d-c8595a807f13}</Project>
-      <Name>Analysis</Name>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </ProjectReference>
     <ProjectReference Include="..\InteractiveWindow\InteractiveWindow.csproj">
       <Project>{24a3887f-da50-4989-8d6c-4a5b04d5d457}</Project>
       <Name>InteractiveWindow</Name>
@@ -1680,27 +1136,35 @@
   <ItemGroup>
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureWebApp\server.ts" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\app.ts" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\express.d.ts" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\index.ts" />
     <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\user.ts" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\stylus.d.ts" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\stylus.d.ts" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\express.d.ts" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptStarterExpressApp\stylus.d.ts" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\app.ts" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\express.d.ts" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\index.ts" />
-    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureStarterExpressApp\stylus.d.ts" />
   </ItemGroup>
   <ItemGroup>
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\app.ts" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\express.d.ts" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\index.ts" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\stylus.d.ts" />
-    <ZipProject Include="ProjectTemplates\TypeScriptAzureExpressWebRole\user.ts" />
     <ZipProject Include="ProjectTemplates\TypeScriptAzureNodejsWorkerRole\server.ts" />
     <ZipProject Include="ProjectTemplates\TypeScriptAzureNodejsWorkerRole\startup.ts" />
     <ZipProject Include="ProjectTemplates\TypeScriptAzureWebRole\server.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="RemoteDebug\" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\express-serve-static-core.d.ts" />
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\serve-static.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptExpressApp\mime.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\express-serve-static-core.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\express.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\serve-static.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptProject Include="ProjectTemplates\TypeScriptAzureExpressApp\mime.d.ts" />
   </ItemGroup>
   <PropertyGroup>
     <!--
@@ -1711,6 +1175,10 @@
     <UseCodebase>true</UseCodebase>
     <RegisterOutputPackage>true</RegisterOutputPackage>
     <RegisterWithCodebase>true</RegisterWithCodebase>
+  </PropertyGroup>
+  <PropertyGroup>
+    <CreateVsixContainer>True</CreateVsixContainer>
+    <CopyVsixExtensionFiles>True</CopyVsixExtensionFiles>
   </PropertyGroup>
   <Import Project="$(BuildRoot)\Common\Product\SharedProject\SharedProject.proj" />
   <Import Project="..\ProjectAfter.settings" />
@@ -1739,7 +1207,18 @@
   </Target>
   <PropertyGroup>
     <PostBuildEvent>
-      copy /y $(OutDir)..\WebRole\Microsoft.NodejsTools.WebRole.dll $(OutDir)Debugger\RemoteDebug\
+      copy /y $(OutDir)..\WebRole\Microsoft.NodejsTools.WebRole.dll $(OutDir)RemoteDebug\
     </PostBuildEvent>
   </PropertyGroup>
+  <!-- We build these assemblies into separate folders to avoid incremental cleaning issues,
+       but then CreatePkgDef can't find them for the ProvideCodeBase attributes. So we copy
+       into the NodejsTools output folder temporarily to generate the pkgdef file. -->
+  <Target Name="_CopyForCreatePkgDef" BeforeTargets="GeneratePkgDef">
+    <Copy SourceFiles="$(OutputPath)..\ProjectWizard\Microsoft.NodejsTools.ProjectWizard.dll;$(OutputPath)..\Npm\Microsoft.NodejsTools.Npm.dll;$(OutputPath)..\PressAnyKey\Microsoft.NodejsTools.PressAnyKey.exe;$(OutputPath)..\TestAdapter\Microsoft.NodejsTools.TestAdapter.dll;" DestinationFolder="$(OutputPath)">
+      <Output TaskParameter="CopiedFiles" ItemName="_CopiedForCreatePkgdef" />
+    </Copy>
+  </Target>
+  <Target Name="_DeleteAfterCreatePkgDef" AfterTargets="GeneratePkgDef">
+    <Delete Files="@(_CopiedForCreatePkgdef)" />
+  </Target>
 </Project>

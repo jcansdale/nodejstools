@@ -11,26 +11,6 @@
         <OldToolsVersion>4.0</OldToolsVersion>
       </PropertyGroup>
     </When>
-    <When Condition=" '$(VisualStudioVersion)'=='12.0'  Or '$(TargetVisualStudioVersion)'=='VS120' ">
-      <PropertyGroup>
-        <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-        <FileUpgradeFlags>
-        </FileUpgradeFlags>
-        <UpgradeBackupLocation>
-        </UpgradeBackupLocation>
-        <OldToolsVersion>4.0</OldToolsVersion>
-      </PropertyGroup>
-    </When>
-    <When Condition=" '$(VisualStudioVersion)'=='11.0'  Or '$(TargetVisualStudioVersion)'=='VS110' ">
-      <PropertyGroup>
-        <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
-        <FileUpgradeFlags>
-        </FileUpgradeFlags>
-        <UpgradeBackupLocation>
-        </UpgradeBackupLocation>
-        <OldToolsVersion>4.0</OldToolsVersion>
-      </PropertyGroup>
-    </When>
   </Choose>
   <Import Project="..\TestProjectBefore.settings" />
   <PropertyGroup>
@@ -104,6 +84,9 @@
       <Project>{9e395ba3-765e-4f35-a520-19f1c323d625}</Project>
       <Name>TestUtilities.Nodejs</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="..\TestProjectAfter.settings" />
   <!--<Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
